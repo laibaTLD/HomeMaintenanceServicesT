@@ -160,7 +160,28 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Messages - Modern Bubble Design */}
-          <div className="h-[280px] overflow-y-auto px-4 py-4 space-y-4 bg-gradient-to-b from-transparent to-white/50">
+          <div 
+            className="h-[280px] overflow-y-auto px-4 py-4 space-y-4 bg-gradient-to-b from-transparent to-white/50"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: `${settings.secondaryColor}60 transparent`,
+            }}
+          >
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                width: 4px;
+              }
+              div::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              div::-webkit-scrollbar-thumb {
+                background: ${settings.secondaryColor}60;
+                border-radius: 4px;
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background: ${settings.primaryColor}80;
+              }
+            `}</style>
             {/* Welcome Message */}
             {messages.length === 0 && (
               <div 
