@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/templates/HomeMaintenanceServices/app/locales/en/common.json"],"sourcesContent":["{\"common\":{\"home\":\"Home\",\"blog\":\"Blog\",\"projects\":\"Projects\",\"services\":\"Services\",\"contact\":\"Contact\"}}"],"names":[],"mappings":"AAAA"}},
-    {"offset": {"line": 3, "column": 130}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

@@ -40,12 +40,17 @@ export function useChatbot(siteId: string | undefined): UseChatbotReturn {
     try {
       setLoading(true);
       setError(null);
+      console.log('[useChatbot] Fetching settings for siteId:', siteId);
       const response = await api.get(`/chatbot/public/${siteId}`);
+      console.log('[useChatbot] Response:', response);
       const data = response.data?.data ?? response.data;
+      console.log('[useChatbot] Parsed data:', data);
+      console.log('[useChatbot] API Key present:', !!data?.apiKey);
+      console.log('[useChatbot] API Key value:', data?.apiKey ? '***' + data.apiKey.slice(-4) : 'undefined');
       // Inject siteId into settings for proxy API calls
       setSettings(data ? { ...data, siteId } : null);
     } catch (err) {
-      console.warn('Failed to load chatbot settings:', err);
+      console.warn('[useChatbot] Failed to load chatbot settings:', err);
       setSettings(null);
       setError(err instanceof Error ? err.message : 'Failed to load chatbot settings');
     } finally {

@@ -116,11 +116,8 @@ export const mediaApi = {
     
     if (!cleanPath) return '';
     
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 
-      (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
-    const isLocalBase = /^http:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\b/i.test(baseUrl);
-    const httpsBaseUrl = isLocalBase ? baseUrl : baseUrl.replace(/^http:\/\//i, 'https://');
-    return `${httpsBaseUrl}/uploads/${cleanPath}`;
+    const uploadsUrl = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
+    return `${uploadsUrl}/uploads/${cleanPath}`;
   },
 };
 

@@ -142,13 +142,7 @@ const createFetchApi = (baseURL: string, defaultTimeout = 30000) => {
 };
 
 // Create API instance
-const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL || 
-  (process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api');
-
-const isLocalRaw = /^http:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\b/i.test(rawBaseUrl);
-const API_BASE_URL = rawBaseUrl.startsWith('http://') && !isLocalRaw
-  ? rawBaseUrl.replace(/^http:\/\//i, 'https://')
-  : rawBaseUrl;
+const API_BASE_URL = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
 
 export const api = createFetchApi(API_BASE_URL);
 

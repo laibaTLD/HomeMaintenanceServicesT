@@ -14,10 +14,13 @@ export const ChatbotProviderWrapper: React.FC<ChatbotProviderWrapperProps> = ({ 
   const { site } = useWebBuilder();
   const { settings } = useChatbot(site?._id);
 
+  // Only render ChatbotWidget if chatbot is enabled in database
+  const shouldRenderChatbot = settings?.isEnabled === true;
+
   return (
     <ChatbotProvider settings={settings}>
       {children}
-      <ChatbotWidget />
+      {shouldRenderChatbot && <ChatbotWidget />}
     </ChatbotProvider>
   );
 };

@@ -23,18 +23,14 @@ const getFullImageUrl = (url: string | undefined): string | undefined => {
     return isLocal ? url : url.replace(/^http:\/\//i, 'https://');
   }
 
-  // Important: uploads are served from the backend root as `/uploads/*`, NOT `/api/uploads/*`.
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ||
-    (process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:5000/api');
-  const origin = apiBase.replace(/\/?api\/?$/, '');
-  const isLocalOrigin = /^http:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?\b/i.test(origin);
-  const backendOrigin = isLocalOrigin ? origin : origin.replace(/^http:\/\//i, 'https://');
+  // Important: uploads are served from the API as `/api/uploads/*`.
+  const apiBase = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
 
   if (url.startsWith('/uploads/')) {
-    return `${backendOrigin}${url}`;
+    return `${apiBase}${url}`;
   }
 
-  return `${backendOrigin}${url.startsWith('/') ? '' : '/'}${url}`;
+  return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`;
 };
 
 // Sample tags for each service (can be customized in the builder later)

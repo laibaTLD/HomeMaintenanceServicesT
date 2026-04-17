@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@langchain/core": "^1.1.40",
+    "@langchain/google-genai": "^2.1.27",
+    "@langchain/langgraph": "^1.2.9",
     "@tiptap/react": "^2.2.4",
     "@tiptap/starter-kit": "^2.2.4",
     "axios": "^1.6.2",

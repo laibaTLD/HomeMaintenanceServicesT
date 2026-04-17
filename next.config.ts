@@ -2,14 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
+    const baseUrl = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:5000/api/:path*',
+        destination: `${baseUrl}/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://localhost:5000/uploads/:path*',
+        destination: `${baseUrl}/uploads/:path*`,
       },
     ];
   },

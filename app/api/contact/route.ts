@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send to backend API which will handle SMTP email sending
-    const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:5000';
+    const backendUrl = (process.env.API_BASE_URL || 'https://sitifystudio.com/api').replace('/api', '');
     
     try {
       const response = await fetch(`${backendUrl}/api/contact`, {
