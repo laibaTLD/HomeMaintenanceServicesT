@@ -16,6 +16,19 @@ class FetchError extends Error {
   }
 }
 
+const safeUrlForError = (url: string) => {
+  try {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      const parsed = new URL(url);
+      return `${parsed.origin}${parsed.pathname}`;
+    }
+    const parsed = new URL(url, 'http://localhost');
+    return parsed.pathname;
+  } catch {
+    return url;
+  }
+};
+
 const createFetchApi = (baseURL: string, defaultTimeout = 30000) => {
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -26,7 +39,7 @@ const createFetchApi = (baseURL: string, defaultTimeout = 30000) => {
   ): Promise<T> => {
     const { timeout = defaultTimeout, ...fetchOptions } = options;
     
-    const url = endpoint.startsWith('http') 
+    const url = endpoint.startsWith('http')
       ? endpoint 
       : `${baseURL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
 
@@ -91,7 +104,8 @@ const createFetchApi = (baseURL: string, defaultTimeout = 30000) => {
         if (error.name === 'AbortError') {
           throw new FetchError('Request timeout', undefined, undefined);
         }
-        throw new FetchError(error.message);
+        const target = safeUrlForError(url);
+        throw new FetchError(`${error.message} (${target})`);
       }
       
       throw new FetchError('Unknown error occurred');
@@ -129,11 +143,15 @@ const createFetchApi = (baseURL: string, defaultTimeout = 30000) => {
 };
 
 // Create API instance
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-if (!API_BASE_URL) {
-  throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
-}
+const API_BASE_URL =
+  typeof window === 'undefined'
+    ? (process.env.API_BASE_URL ||
+        process.env.NEXT_PUBLIC_API_BASE_URL ||
+        'https://sitifystudio.com/api')
+    : (process.env.NEXT_PUBLIC_API_BASE_URL &&
+        process.env.NEXT_PUBLIC_API_BASE_URL.startsWith('/')
+        ? process.env.NEXT_PUBLIC_API_BASE_URL
+        : '/api');
 
 export const api = createFetchApi(API_BASE_URL);
 

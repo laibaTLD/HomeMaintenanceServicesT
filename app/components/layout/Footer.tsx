@@ -55,6 +55,42 @@ export const Footer: React.FC = () => {
     return String(copyright);
   };
 
+  const renderFooterDescription = () => {
+    const description = site?.footer?.description;
+    if (!description) return null;
+    if (typeof description === 'object' && description.type === 'doc') {
+      return <TiptapRenderer content={description} as="inline" />;
+    }
+    return String(description);
+  };
+
+  const renderSiteName = () => {
+    const name = site?.name;
+    if (!name) return '';
+    if (typeof name === 'object' && (name as any).type === 'doc') {
+      return <TiptapRenderer content={name} as="inline" />;
+    }
+    return String(name);
+  };
+
+  const renderInlineText = (value: unknown) => {
+    if (value && typeof value === 'object' && (value as any).type === 'doc') {
+      return <TiptapRenderer content={value} as="inline" />;
+    }
+    return String(value ?? '');
+  };
+
+  const renderLegalHeading = (heading: unknown, fallback: string) => {
+    if (heading && typeof heading === 'object' && (heading as any).type === 'doc') {
+      return <TiptapRenderer content={heading} as="inline" />;
+    }
+    if (typeof heading === 'string' || typeof heading === 'number') {
+      const text = String(heading).trim();
+      return text ? text : fallback;
+    }
+    return fallback;
+  };
+
   return (
     <footer
       className="pt-12 pb-4 overflow-hidden"
@@ -71,13 +107,13 @@ export const Footer: React.FC = () => {
             {site?.theme?.logoUrl ? (
               <img
                 src={getImageSrc(site.theme.logoUrl)}
-                alt={site?.name || 'Logo'}
+                alt={typeof site?.name === 'string' ? site.name : 'Logo'}
                 className="h-20 w-auto object-contain brightness-0 invert"
                 style={{ filter: 'brightness(0) invert(1)' }}
               />
             ) : (
               <h2 className="text-3xl font-serif italic" style={{ fontFamily: themeFonts.heading }}>
-                {site?.name}
+                {renderSiteName()}
               </h2>
             )}
 
@@ -86,7 +122,7 @@ export const Footer: React.FC = () => {
                 className="text-sm opacity-60 leading-relaxed max-w-sm"
                 style={{ fontFamily: themeFonts.body }}
               >
-                {site.footer.description}
+                {renderFooterDescription()}
               </p>
             )}
           </div>
@@ -109,7 +145,7 @@ export const Footer: React.FC = () => {
                       className="text-base hover:translate-x-1 inline-block transition-transform duration-300"
                       style={{ fontFamily: themeFonts.body }}
                     >
-                      {p.name}
+                      {renderInlineText(p.name)}
                     </a>
                   </li>
                 ))}
@@ -207,7 +243,7 @@ export const Footer: React.FC = () => {
                 href="/terms-of-service"
                 className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-40 hover:opacity-100 transition-opacity"
               >
-                {site.legal.termsOfService.heading}
+                {renderLegalHeading(site.legal.termsOfService.heading, 'Terms of Service')}
               </a>
             ) : (
               <a 
@@ -222,7 +258,7 @@ export const Footer: React.FC = () => {
                 href="/privacy-policy"
                 className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-40 hover:opacity-100 transition-opacity"
               >
-                {site.legal.privacyPolicy.heading}
+                {renderLegalHeading(site.legal.privacyPolicy.heading, 'Privacy Policy')}
               </a>
             ) : (
               <a 

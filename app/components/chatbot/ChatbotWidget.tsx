@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChatbotContext, ChatMessage } from '@/app/providers/ChatbotProvider';
 import { MessageCircle, X, Send, Loader2, Sparkles } from 'lucide-react';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 
 export default function ChatbotWidget() {
   const {
@@ -16,6 +17,7 @@ export default function ChatbotWidget() {
   } = useChatbotContext();
 
   const [inputValue, setInputValue] = useState('');
+  const [iconLoadError, setIconLoadError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,11 +85,12 @@ export default function ChatbotWidget() {
         }}
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
-        {settings.iconUrl ? (
+        {settings.iconUrl && !iconLoadError ? (
           <img
             src={settings.iconUrl}
             alt={settings.botName}
             className="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
+            onError={() => setIconLoadError(true)}
           />
         ) : (
           <div className="relative">
@@ -123,11 +126,12 @@ export default function ChatbotWidget() {
           >
             <div className="flex items-center gap-3">
               <div className="relative">
-                {settings.iconUrl ? (
+                {settings.iconUrl && !iconLoadError ? (
                   <img
                     src={settings.iconUrl}
                     alt={settings.botName}
                     className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30"
+                    onError={() => setIconLoadError(true)}
                   />
                 ) : (
                   <div
@@ -184,9 +188,9 @@ export default function ChatbotWidget() {
             `}</style>
             {/* Welcome Message */}
             {messages.length === 0 && (
-              <div 
+              <div
                 className="rounded-2xl px-4 py-3 text-sm"
-                style={{ 
+                style={{
                   backgroundColor: `${settings.primaryColor}15`,
                   color: settings.primaryColor,
                   border: `1px solid ${settings.primaryColor}20`
@@ -196,7 +200,11 @@ export default function ChatbotWidget() {
                   <Sparkles className="w-4 h-4" />
                   <span className="font-medium">{settings.botName}</span>
                 </div>
-                {settings.welcomeMessage}
+                {typeof settings.welcomeMessage === 'object' ? (
+                  <TiptapRenderer content={settings.welcomeMessage} />
+                ) : (
+                  settings.welcomeMessage
+                )}
               </div>
             )}
             {messages.map((msg) => (

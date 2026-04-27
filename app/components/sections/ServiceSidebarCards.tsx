@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 
 interface OtherServicesCardProps {
     otherServices: any[];
@@ -67,11 +68,11 @@ export const OtherServicesCard: React.FC<OtherServicesCardProps> = ({ otherServi
                                     className="w-12 h-12 object-cover rounded-lg"
                                 />
                             )}
-                            <span 
+                            <span
                                 className="text-sm font-medium group-hover:underline"
                                 style={{ color: themeColors.darkPrimaryText }}
                             >
-                                {otherService.name}
+                                <TiptapRenderer content={otherService.name} as="inline" />
                             </span>
                         </Link>
                     </li>
@@ -128,7 +129,7 @@ export const QuickContactCard: React.FC<QuickContactCardProps> = ({ service }) =
                 className="text-sm mb-4"
                 style={{ color: themeColors.secondaryText }}
             >
-                Contact us for a free consultation about {service.name}.
+                Contact us for a free consultation about <TiptapRenderer content={service.name} as="inline" />.
             </p>
             <Link
                 href="/contact-us"

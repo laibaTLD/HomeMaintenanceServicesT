@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
 import { getImageSrc } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -76,6 +77,15 @@ export const Header: React.FC = () => {
       return a.name.localeCompare(b.name);
     });
 
+  const renderInlineText = (value: unknown) => {
+    if (value && typeof value === 'object' && (value as any).type === 'doc') {
+      return <TiptapRenderer content={value} as="inline" />;
+    }
+    return String(value ?? '');
+  };
+
+  const logoAlt = typeof site.business.name === 'string' ? site.business.name : 'Logo';
+
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-[50] transition-all duration-500 ${
@@ -97,7 +107,7 @@ export const Header: React.FC = () => {
             {site.theme.logoUrl ? (
               <img
                 src={getImageSrc(site.theme.logoUrl)}
-                alt={site.business.name}
+                alt={logoAlt}
                 className="h-10 w-auto object-contain"
               />
             ) : (
@@ -105,7 +115,7 @@ export const Header: React.FC = () => {
                 className="text-xl font-black uppercase tracking-tighter"
                 style={{ fontFamily: themeFonts.heading, color: isScrolled ? themeColors.darkPrimaryText : themeColors.lightPrimaryText }}
               >
-                {site.business.name || 'Buildify'}
+                {site.business.name ? renderInlineText(site.business.name) : 'Buildify'}
               </span>
             )}
           </Link>
@@ -141,7 +151,7 @@ export const Header: React.FC = () => {
                       }`}
                       style={{ color: isScrolled ? themeColors.darkSecondaryText : themeColors.primaryButton }}
                     >
-                      {page.name}
+                      {renderInlineText(page.name)}
                       {/* Add dropdown arrow indicator */}
                       <svg 
                         className="w-3 h-3 transition-transform duration-200" 
@@ -221,7 +231,7 @@ export const Header: React.FC = () => {
                                       onClick={() => setIsServicesDropdownOpen(false)}
                                     >
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm font-medium">{service.name}</span>
+                                        <span className="text-sm font-medium">{renderInlineText(service.name)}</span>
                                         {serviceAreasForService.length > 0 && (
                                           <svg 
                                             className="w-3 h-3 transition-transform duration-200" 
@@ -284,13 +294,13 @@ export const Header: React.FC = () => {
                                               key={index}
                                               href={`/service/${service.slug}/service-areas/${citySlug}`}
                                               className="block px-5 py-3 transition-all duration-300 hover:bg-gray-50"
-                                              style={{ 
+                                              style={{
                                                 color: themeColors.darkSecondaryText,
                                                 fontFamily: themeFonts.body
                                               }}
                                               onClick={() => setIsServicesDropdownOpen(false)}
                                             >
-                                              <span className="text-sm font-medium">{area.city}, {area.region}</span>
+                                              <span className="text-sm font-medium">{renderInlineText(area.city)}, {renderInlineText(area.region)}</span>
                                             </Link>
                                           );
                                         })}
@@ -317,7 +327,7 @@ export const Header: React.FC = () => {
                   }`}
                   style={{ color: isScrolled ? themeColors.darkSecondaryText : themeColors.primaryButton }}
                 >
-                  {page.name}
+                  {renderInlineText(page.name)}
                 </Link>
               );
             })}
@@ -333,7 +343,7 @@ export const Header: React.FC = () => {
                 color: isScrolled ? themeColors.primaryButton : themeColors.darkPrimaryText
               }}
             >
-              {contactPage?.name || 'Contact Us'}
+              {contactPage?.name ? renderInlineText(contactPage.name) : 'Contact Us'}
             </Link>
             
             {/* Arrow Button - Architectural style */}
@@ -366,7 +376,7 @@ export const Header: React.FC = () => {
           >
             <div className="flex justify-between items-center mb-16">
               <span className="text-xl font-black uppercase tracking-tighter" style={{ color: themeColors.darkPrimaryText }}>
-                {site.business.name}
+                {renderInlineText(site.business.name)}
               </span>
               <button 
                 onClick={() => setIsMobileMenuOpen(false)} 
@@ -386,7 +396,7 @@ export const Header: React.FC = () => {
                   style={{ fontFamily: themeFonts.heading, color: themeColors.darkPrimaryText }}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {page.name}
+                  {renderInlineText(page.name)}
                 </Link>
               ))}
               
@@ -398,7 +408,7 @@ export const Header: React.FC = () => {
                   style={{ fontFamily: themeFonts.heading, color: themeColors.darkPrimaryText }}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  {contactPage.name}
+                  {renderInlineText(contactPage.name)}
                 </Link>
               )}
             </div>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 
 interface ServiceServingAreasSectionProps {
     service: any;
@@ -227,7 +228,7 @@ export const ServiceServingAreasSection: React.FC<ServiceServingAreasSectionProp
                                                         fontFamily: themeFonts.body
                                                     }}
                                                 >
-                                                    <span className="text-sm font-medium">Learn More About {service.name}</span>
+                                                    <span className="text-sm font-medium">Learn More About <TiptapRenderer content={service.name} as="inline" /></span>
                                                 </Link>
                                             </div>
                                         </div>

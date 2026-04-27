@@ -51,7 +51,9 @@ export const ChatbotProvider: React.FC<ChatbotProviderProps> = ({ children, sett
         {
           id: 'welcome',
           role: 'assistant',
-          content: settings.welcomeMessage,
+          content: typeof settings.welcomeMessage === 'object'
+            ? JSON.stringify(settings.welcomeMessage)
+            : settings.welcomeMessage || 'Hello! How can I help you today?',
           timestamp: new Date(),
         },
       ]);

@@ -128,13 +128,13 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
                                             className="text-xs tracking-[0.3em] uppercase font-black mb-2"
                                             style={{ color: themeColors.primaryButton }}
                                         >
-                                            {t.name}
+                                            <TiptapRenderer content={t.name} as="inline" />
                                         </span>
                                         <span 
                                             className="text-[10px] tracking-widest opacity-60 uppercase"
                                             style={{ color: themeColors.lightSecondaryText }}
                                         >
-                                            {t.role} {t.company && `• ${t.company}`}
+                                            <TiptapRenderer content={t.role} as="inline" /> {t.company && <><TiptapRenderer content={`• ${t.company}`} as="inline" /></>}
                                         </span>
                                     </div>
                                 </div>

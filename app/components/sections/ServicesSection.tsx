@@ -143,11 +143,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesSectio
                     {/* Title */}
                     <h3
                       className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium tracking-tight"
-                      style={{ 
-                        color: themeColors.lightPrimaryText, 
+                      style={{
+                        color: themeColors.lightPrimaryText,
                       }}
                     >
-                      {service.name}
+                      <TiptapRenderer content={service.name} as="inline" />
                     </h3>
 
                     {/* Tags */}

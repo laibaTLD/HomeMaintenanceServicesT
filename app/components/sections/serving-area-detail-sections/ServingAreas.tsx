@@ -6,6 +6,7 @@ import { cn } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
 import { MapPin } from 'lucide-react';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 
 interface ServiceServingAreasSectionProps {
     service: any;
@@ -60,16 +61,17 @@ export const ServingAreas: React.FC<ServiceServingAreasSectionProps> = ({ servic
     }
 
     // Generate service slug from service name or use a default
-    const serviceSlug = service?.name ? 
-        String(service.name)
+    const serviceSlug = service?.name ?
+        String(typeof service.name === 'object' ? JSON.stringify(service.name) : service.name)
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '') : 
+            .replace(/^-|-$/g, '') :
         'service';
 
     const resolvedTitle = `Serving Areas`;
-    const resolvedDescription = service?.name ? 
-        `We provide ${service.name} services in the following areas` : 
+    const serviceName = typeof service?.name === 'object' ? JSON.stringify(service.name) : service?.name;
+    const resolvedDescription = serviceName ?
+        `We provide ${serviceName} services in the following areas` :
         'We provide services in the following areas';
 
     return (
@@ -143,21 +145,21 @@ export const ServingAreas: React.FC<ServiceServingAreasSectionProps> = ({ servic
                                                 className="text-2xl lg:text-3xl font-serif transition-colors"
                                                 style={{ color: themeColors.lightPrimaryText }}
                                             >
-                                                {cityName}
+                                                <TiptapRenderer content={cityName} as="inline" />
                                             </span>
-                                            <MapPin 
-                                                className="w-4 h-4 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500" 
+                                            <MapPin
+                                                className="w-4 h-4 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
                                                 style={{ color: themeColors.primaryButton }}
                                             />
                                         </div>
-                                        
+
                                         {/* Region if available */}
                                         {typeof area !== 'string' && area.region && (
-                                            <span 
+                                            <span
                                                 className="text-sm opacity-70"
                                                 style={{ color: themeColors.lightSecondaryText }}
                                             >
-                                                {area.region}
+                                                <TiptapRenderer content={area.region} as="inline" />
                                             </span>
                                         )}
                                         

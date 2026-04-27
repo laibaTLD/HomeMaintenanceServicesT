@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
+import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 
 interface ServiceFAQSectionProps {
     service: any;

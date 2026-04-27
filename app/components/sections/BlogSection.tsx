@@ -119,7 +119,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
                                     style={{ color: themeColors.lightPrimaryText, fontFamily: themeFonts.heading }}
                                 >
                                     <a href={`/blog/${post.slug}`}>
-                                        {post.title}
+                                        <TiptapRenderer content={post.title} as="inline" />
                                     </a>
                                 </h3>
 
@@ -147,7 +147,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
                                                 className="text-xs font-medium opacity-60"
                                                 style={{ color: themeColors.lightPrimaryText, fontFamily: themeFonts.body }}
                                             >
-                                                By {post.author.name}
+                                                By <TiptapRenderer content={post.author.name} as="inline" />
                                             </span>
                                         </div>
                                     )}

@@ -101,7 +101,7 @@ export interface Site {
       url: string;
       altText?: string;
     };
-    description?: string;
+    description?: any;
     columns: Array<{
       title: string;
       links: Array<{
@@ -124,12 +124,12 @@ export interface Site {
   legal: {
     termsOfService?: {
       heading?: string;
-      description?: string;
+      description?: any;
       content?: any; // Tiptap JSON
     };
     privacyPolicy?: {
       heading?: string;
-      description?: string;
+      description?: any;
       content?: any; // Tiptap JSON
     };
   };
