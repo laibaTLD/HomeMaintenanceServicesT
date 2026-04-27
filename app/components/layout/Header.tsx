@@ -52,14 +52,14 @@ export const Header: React.FC = () => {
   if (!site) return null;
 
   const publishedPages = pages.filter(page => page.status === 'published');
-  const contactPage = publishedPages.find(p => p.slug.includes('contact'));
-  
+  const contactPage = publishedPages.find(p => p.pageType === 'contact');
+
   // Define the order for navigation pages
   const pageOrder = ['home', 'about', 'service-list', 'blog-list'];
-  
+
   // Sort pages according to the defined order, then by name for remaining pages
   const navPages = publishedPages
-    .filter(p => !p.slug.includes('contact'))
+    .filter(p => p.pageType !== 'contact')
     .sort((a, b) => {
       const aIndex = pageOrder.indexOf(a.pageType);
       const bIndex = pageOrder.indexOf(b.pageType);
@@ -82,6 +82,20 @@ export const Header: React.FC = () => {
       return <TiptapRenderer content={value} as="inline" />;
     }
     return String(value ?? '');
+  };
+
+  // Helper function to get page path from pageType
+  const getPagePath = (pageType: string) => {
+    const pathMap: Record<string, string> = {
+      'home': '/',
+      'about': '/about-us',
+      'contact': '/contact-us',
+      'service-list': '/services',
+      'blog-list': '/blog',
+      'testimonials': '/testimonials',
+      'project-detail': '/project-detail',
+    };
+    return pathMap[pageType] || `/${pageType}`;
   };
 
   const logoAlt = typeof site.business.name === 'string' ? site.business.name : 'Logo';
@@ -127,7 +141,7 @@ export const Header: React.FC = () => {
               if (page.pageType === 'service-list') {
                 return (
                   <div
-                    key={page.slug}
+                    key={page._id}
                     ref={servicesDropdownRef}
                     className="relative"
                     onMouseEnter={() => {
@@ -145,7 +159,7 @@ export const Header: React.FC = () => {
                     }}
                   >
                     <Link
-                      href={`/${page.slug}`}
+                      href={getPagePath(page.pageType)}
                       className={`text-xs font-bold uppercase tracking-[0.2em] transition-all hover:opacity-50 flex items-center gap-1 ${
                         isScrolled ? 'text-black' : 'text-white'
                       }`}
@@ -320,8 +334,8 @@ export const Header: React.FC = () => {
               // Regular navigation items
               return (
                 <Link
-                  key={page.slug}
-                  href={page.pageType === 'home' ? '/' : `/${page.slug}`}
+                  key={page._id}
+                  href={getPagePath(page.pageType)}
                   className={`text-xs font-bold uppercase tracking-[0.2em] transition-all hover:opacity-50 ${
                     isScrolled ? 'text-black' : 'text-white'
                   }`}
@@ -336,7 +350,7 @@ export const Header: React.FC = () => {
           {/* Action Section */}
           <div className="flex items-center gap-2">
             <Link
-              href={contactPage ? `/${contactPage.slug}` : '#'}
+              href={contactPage ? getPagePath(contactPage.pageType) : '#'}
               className="hidden md:flex items-center h-12 px-8 rounded-full font-bold text-[10px] uppercase tracking-[0.2em] transition-all"
               style={{
                 backgroundColor: isScrolled ? themeColors.darkPrimaryText : themeColors.primaryButton,
@@ -390,8 +404,8 @@ export const Header: React.FC = () => {
             <div className="flex flex-col space-y-6">
               {navPages.map((page) => (
                 <Link
-                  key={page.slug}
-                  href={page.pageType === 'home' ? '/' : `/${page.slug}`}
+                  key={page._id}
+                  href={getPagePath(page.pageType)}
                   className="text-4xl font-black uppercase tracking-tighter text-black hover:italic"
                   style={{ fontFamily: themeFonts.heading, color: themeColors.darkPrimaryText }}
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -399,11 +413,11 @@ export const Header: React.FC = () => {
                   {renderInlineText(page.name)}
                 </Link>
               ))}
-              
+
               {/* Add Contact button at the end of mobile menu */}
               {contactPage && (
                 <Link
-                  href={`/${contactPage.slug}`}
+                  href={getPagePath(contactPage.pageType)}
                   className="text-4xl font-black uppercase tracking-tighter text-black hover:italic"
                   style={{ fontFamily: themeFonts.heading, color: themeColors.darkPrimaryText }}
                   onClick={() => setIsMobileMenuOpen(false)}

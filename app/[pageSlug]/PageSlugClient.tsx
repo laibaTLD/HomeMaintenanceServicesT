@@ -60,7 +60,7 @@ export default function PageSlugClient({ pageSlug: pageSlugProp }: PageSlugClien
   useEffect(() => {
     if (pages.length === 0) return;
 
-    const foundPage = pages.find(page => page.slug === pageSlug);
+    const foundPage = pages.find(page => page.pageType === pageSlug);
     if (foundPage) {
       setCurrentPage(foundPage);
       setServiceAreaPage(null);

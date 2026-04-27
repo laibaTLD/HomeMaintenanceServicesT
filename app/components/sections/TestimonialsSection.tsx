@@ -92,6 +92,14 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
                             <TiptapRenderer content={testimonialsSection.title} />
                         </h2>
                     )}
+                    {testimonialsSection.description && (
+                        <div
+                            className="text-base lg:text-lg max-w-2xl mt-6"
+                            style={{ color: themeColors.lightSecondaryText, fontFamily: themeFonts.body }}
+                        >
+                            <TiptapRenderer content={testimonialsSection.description} />
+                        </div>
+                    )}
                 </div>
 
                 {/* Main Carousel Display */}

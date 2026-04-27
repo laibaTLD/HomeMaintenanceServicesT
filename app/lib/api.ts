@@ -2,11 +2,15 @@ import { Site, Page, Service, BlogPost, Project } from './types';
 import api from './fetch-api';
 
 // Base URL for API
-const API_BASE_URL = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+if (!API_BASE_URL) {
+  throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
+}
 
 // Helper function for ISR-enabled fetch
 async function fetchWithISR<T>(endpoint: string, revalidate: number = 60): Promise<T> {
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL!.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
   
   const response = await fetch(url, {
     next: { revalidate },
@@ -87,6 +91,12 @@ export const projectApi = {
   getProjectBySlug: async (siteSlug: string, projectSlug: string, revalidate: number = 60): Promise<Project> => {
     return fetchWithISR<Project>(`/public/sites/${siteSlug}/projects/${projectSlug}`, revalidate);
   },
+
+  getProjectsByIds: async (siteSlug: string, projectIds: string[], revalidate: number = 60): Promise<Project[]> => {
+    if (projectIds.length === 0) return [];
+    const idsParam = projectIds.join(',');
+    return fetchWithISR<Project[]>(`/public/sites/${siteSlug}/projects?ids=${idsParam}`, revalidate);
+  },
 };
 
 // Testimonials API
@@ -125,7 +135,7 @@ export const mediaApi = {
     
     if (!cleanPath) return '';
     
-    const uploadsUrl = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
+    const uploadsUrl = API_BASE_URL!;
     return `${uploadsUrl}/uploads/${cleanPath}`;
   },
 };

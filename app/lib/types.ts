@@ -149,7 +149,7 @@ export interface Page {
   siteId: string;
   name: string;
   slug: string;
-  pageType: 'home' | 'about' | 'contact' | 'service-list' | 'blog-list' | 'project-detail';
+  pageType: 'home' | 'about' | 'contact' | 'service-list' | 'blog-list' | 'project-detail' | 'testimonials';
   status: 'draft' | 'published' | 'archived';
   serviceListTitle?: any;
   serviceListDescription?: any;
@@ -293,6 +293,7 @@ export interface Page {
     title?: any;
     description?: any;
     items?: Array<{
+      icon?: string;
       title?: any;
       description?: any;
     }>;
@@ -316,15 +317,7 @@ export interface Page {
     enabled: boolean;
     title?: any;
     description?: any;
-    projects?: Array<{
-      title?: any;
-      description?: any;
-      image?: {
-        url: string;
-        altText?: string;
-      };
-      href?: string;
-    }>;
+    projectIds?: string[]; // References to Project collection
   };
   cta2Section?: {
     enabled: boolean;

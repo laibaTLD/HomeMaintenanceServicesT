@@ -29,20 +29,34 @@ export const Footer: React.FC = () => {
   // Define the order for navigation pages to match Header
   const pageOrder = ['home', 'about', 'service-list', 'blog-list'];
 
+  // Helper function to get page path from pageType
+  const getPagePath = (pageType: string) => {
+    const pathMap: Record<string, string> = {
+      'home': '/',
+      'about': '/about-us',
+      'contact': '/contact-us',
+      'service-list': '/services',
+      'blog-list': '/blog',
+      'testimonials': '/testimonials',
+      'project-detail': '/project-detail',
+    };
+    return pathMap[pageType] || `/${pageType}`;
+  };
+
   // Sort pages according to the defined order, then by name for remaining pages
   const navPages = pages
-    .filter(p => p.status === 'published' && !p.slug.includes('contact'))
+    .filter(p => p.status === 'published' && p.pageType !== 'contact')
     .sort((a, b) => {
       const aIndex = pageOrder.indexOf(a.pageType);
       const bIndex = pageOrder.indexOf(b.pageType);
-      
+
       if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
       if (aIndex !== -1) return -1;
       if (bIndex !== -1) return 1;
       return a.name.localeCompare(b.name);
     });
 
-  const contactPage = pages.find(p => p.status === 'published' && p.slug.includes('contact'));
+  const contactPage = pages.find(p => p.status === 'published' && p.pageType === 'contact');
   const allNavPages = [...navPages, ...(contactPage ? [contactPage] : [])];
 
   const renderCopyright = () => {
@@ -139,9 +153,9 @@ export const Footer: React.FC = () => {
               </span>
               <ul className="space-y-4">
                 {allNavPages.map((p, idx) => (
-                  <li key={`${p.slug}-${idx}`}>
+                  <li key={`${p._id}-${idx}`}>
                     <a
-                      href={`/${p.slug === 'home' ? '' : p.slug}`}
+                      href={getPagePath(p.pageType)}
                       className="text-base hover:translate-x-1 inline-block transition-transform duration-300"
                       style={{ fontFamily: themeFonts.body }}
                     >

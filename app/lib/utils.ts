@@ -28,10 +28,17 @@ export function getImageSrc(path: string | undefined | null | any): string {
   if (pathStr.startsWith('data:')) return pathStr
 
   // Media Library path - resolve to backend URL
-  const uploadsUrl = process.env.API_BASE_URL || 'https://sitifystudio.com/api'
+  const uploadsUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Strip leading slash and /uploads/ if present to avoid double uploads in path
+  if (!uploadsUrl) {
+    throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
+  }
+
+  // Strip leading slash, /api/, and /uploads/ if present to avoid double prefixes in path
   let cleanPath = pathStr.replace(/^\//, '')
+  if (cleanPath.startsWith('api/')) {
+    cleanPath = cleanPath.substring(4) // Remove 'api/'
+  }
   if (cleanPath.startsWith('uploads/')) {
     cleanPath = cleanPath.substring(8) // Remove 'uploads/'
   }

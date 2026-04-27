@@ -24,13 +24,26 @@ const getFullImageUrl = (url: string | undefined): string | undefined => {
   }
 
   // Important: uploads are served from the API as `/api/uploads/*`.
-  const apiBase = process.env.API_BASE_URL || 'https://sitifystudio.com/api';
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  if (url.startsWith('/uploads/')) {
-    return `${apiBase}${url}`;
+  if (!apiBase) {
+    console.error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
+    return undefined;
   }
 
-  return `${apiBase}${url.startsWith('/') ? '' : '/'}${url}`;
+  // Clean up the URL - remove leading slashes and any /api/ or /uploads/ prefixes
+  let cleanUrl = url;
+  if (cleanUrl.startsWith('/')) {
+    cleanUrl = cleanUrl.substring(1);
+  }
+  if (cleanUrl.startsWith('api/')) {
+    cleanUrl = cleanUrl.substring(4);
+  }
+  if (cleanUrl.startsWith('uploads/')) {
+    cleanUrl = cleanUrl.substring(8);
+  }
+
+  return `${apiBase}/uploads/${cleanUrl}`;
 };
 
 // Sample tags for each service (can be customized in the builder later)
@@ -250,19 +263,21 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesSectio
                   </div>
 
                   {/* Service Image - Right side */}
-                  {service.thumbnailImage && service.thumbnailImage.url && service.thumbnailImage.url.trim() !== '' ? (
+                  {service.thumbnailImage?.url?.trim() ? (
                     <div className="flex-shrink-0 w-40 lg:w-64">
                       <div className="relative w-full h-full min-h-32 lg:min-h-40">
                         <img
-                          src={getFullImageUrl(service.thumbnailImage.url) || ''}
+                          src={getFullImageUrl(service.thumbnailImage.url)}
                           alt={service.thumbnailImage.altText || service.name}
-                          className="absolute inset-0 w-full h-full object-cover rounded-xl shadow-sm transition-all duration-300 group-hover:scale-105"
+                          className="absolute inset-0 w-full h-full object-cover rounded-xl shadow-sm transition-all duration-300"
                           style={{
                             opacity: isActive ? 1 : 0,
-                            transform: isActive ? 'scale(1)' : 'scale(0.98)',
+                            transform: isActive ? 'scale(1)' : 'scale(0.95)',
                             pointerEvents: 'none',
+                            transition: 'opacity 0.3s ease, transform 0.3s ease',
                           }}
                           onError={(e) => {
+                            console.error('Image failed to load:', service.thumbnailImage?.url);
                             e.currentTarget.style.display = 'none';
                           }}
                         />

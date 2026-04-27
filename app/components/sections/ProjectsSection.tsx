@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Page } from '@/app/lib/types';
+import { Page, Project } from '@/app/lib/types';
 import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 import { cn, getImageSrc } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
+import { projectApi } from '@/app/lib/api';
 import { ArrowUpRight } from 'lucide-react';
 
 interface ProjectsSectionProps {
@@ -14,20 +15,66 @@ interface ProjectsSectionProps {
   className?: string;
 }
 
-type ProjectItem = NonNullable<NonNullable<Page['projectsSection']>['projects']>[number];
-
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projectsSection, className }) => {
   const themeColors = useThemeColors();
   const themeFonts = useThemeFonts();
-  const { projects } = useWebBuilder();
+  const { site, projects: allProjects, loading: webBuilderLoading } = useWebBuilder();
+  
+  const [sectionProjects, setSectionProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      if (!site?.slug || !projectsSection?.enabled) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // If projectIds are specified, fetch those specific projects
+        if (projectsSection.projectIds && projectsSection.projectIds.length > 0) {
+          const projects = await projectApi.getProjectsByIds(site.slug, projectsSection.projectIds);
+          // Filter only published projects
+          const publishedProjects = projects.filter(p => p.status === 'published');
+          setSectionProjects(publishedProjects);
+        } else {
+          // If no projectIds, fall back to all site projects
+          const publishedProjects = (allProjects || []).filter((p) => p.status === 'published');
+          setSectionProjects(publishedProjects.slice(0, 6));
+        }
+      } catch (error) {
+        console.error('Failed to load projects:', error);
+        // Fallback to all projects on error
+        const publishedProjects = (allProjects || []).filter((p) => p.status === 'published');
+        setSectionProjects(publishedProjects.slice(0, 6));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, [site?.slug, projectsSection?.projectIds, allProjects, projectsSection?.enabled]);
 
   if (!projectsSection?.enabled) return null;
 
-  const publishedProjects = (projects || []).filter((p) => p.status === 'published');
-  const latestProjects = publishedProjects.slice(0, 6);
-  const manualProjects: ProjectItem[] = projectsSection.projects || [];
-  // Use manual projects if they exist (they have images from page section), otherwise fall back to DB projects
-  const displayItems = manualProjects.length > 0 ? manualProjects : latestProjects;
+  if (loading || webBuilderLoading) {
+    return (
+      <section className={cn('py-24 lg:py-32 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="aspect-[4/5] bg-gray-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const displayItems = sectionProjects;
 
   return (
     <section className={cn('py-24 lg:py-32 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
@@ -151,8 +198,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projectsSectio
           })}
         </div>
 
-        {/* View All Section */}
-        {publishedProjects.length > latestProjects.length && (
+        {/* View All Section - only show when not using specific project IDs */}
+        {(!projectsSection?.projectIds || projectsSection.projectIds.length === 0) && allProjects && allProjects.length > 6 && (
           <div className="mt-20 flex justify-center">
             <Link
               href="/project-detail"

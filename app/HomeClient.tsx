@@ -18,6 +18,7 @@ import { CTA2Section } from '@/app/components/sections/CTA2Section';
 import { CTA3Section } from '@/app/components/sections/CTA3Section';
 import { ServingAreasSection } from '@/app/components/sections/ServingAreasSection';
 import { GallerySection } from '@/app/components/sections/GallerySection';
+import { BlogSection } from '@/app/components/sections/BlogSection';
 import { ContactSection } from './components/sections/ContactSection';
 
 export default function HomeClient() {
@@ -156,6 +157,7 @@ export default function HomeClient() {
 
         <TestimonialsSection testimonialsSection={displayPage.testimonialsSection || { enabled: true, testimonials: testimonials?.testimonials || [] }} />
         <GallerySection gallerySection={displayPage.gallerySection} />
+        <BlogSection blogSection={displayPage.blogSection} />
         <ServingAreasSection />
         <FAQSection faqSection={displayPage.faqSection} />
         <ContactSection contactSection={displayPage.contactSection} />
