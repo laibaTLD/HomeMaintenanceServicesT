@@ -317,7 +317,12 @@ export interface Page {
     enabled: boolean;
     title?: any;
     description?: any;
-    projectIds?: string[]; // References to Project collection
+    projectIds?: string[];
+  };
+  projectSection?: {
+    enabled: boolean;
+    title?: any;
+    description?: any;
   };
   cta2Section?: {
     enabled: boolean;

@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
+import { Page } from '@/app/lib/types';
 import { Header } from '@/app/components/layout/Header';
 import { Footer } from '@/app/components/layout/Footer';
+import { HeroSection } from '@/app/components/sections/HeroSection';
+import { ProjectSection } from '@/app/components/sections/ProjectSection';
 import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 import { getImageSrc, cn } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
@@ -12,21 +15,21 @@ import { truncate } from '@/app/lib/seo';
 import { ArrowUpRight } from 'lucide-react';
 
 export default function ProjectsListingPage() {
-  const { site, projects, loading } = useWebBuilder();
-  const themeColors = useThemeColors();
-  const themeFonts = useThemeFonts();
+  const { site, pages, projects, loading } = useWebBuilder();
+  const themeColors = useThemeColors();
+  const themeFonts = useThemeFonts();
 
-  // Filter published projects only
-  const publishedProjects = (projects || []).filter(p => p.status === 'published');
+  const projectPage = pages.find((p: Page) => p.pageType === 'project-detail');
+  const publishedProjects = (projects || []).filter((p) => p.status === 'published');
+  const useCmsIntro = projectPage?.projectSection?.enabled;
 
-  const siteName = site?.business?.name || site?.name || 'Projects';
+  const siteName = site?.business?.name || site?.name || 'Projects';
   const seoTitle = `Projects | ${siteName}`;
   const seoDescription = truncate(
     site?.business?.description || `Browse all projects from ${siteName}`,
     160
   );
 
-  // Show loading if site not loaded yet or explicit loading state
   if (loading || !site) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: themeColors.pageBackground }}>
@@ -48,39 +51,41 @@ export default function ProjectsListingPage() {
       />
       <Header />
 
-      <main className="pt-32 pb-16 lg:pt-40 lg:pb-24">
-        <div className="container mx-auto px-6 lg:px-12">
-          
-          {/* Editorial Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 lg:mb-24">
-            <div className="max-w-2xl">
-              <div className="mb-6 flex items-center gap-3">
-                <span 
-                  className="text-[10px] tracking-[0.4em] uppercase font-bold"
-                  style={{ color: themeColors.primaryButton, fontFamily: themeFonts.body }}
+      <main>
+        {projectPage?.hero?.enabled && <HeroSection hero={projectPage.hero} />}
+        {useCmsIntro ? (
+          <ProjectSection projectSection={projectPage?.projectSection} className="pt-32 lg:pt-40" />
+        ) : (
+          <div className="pt-32 pb-8 lg:pt-40 lg:pb-12 container mx-auto px-6 lg:px-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+              <div className="max-w-2xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <span
+                    className="text-[10px] tracking-[0.4em] uppercase font-bold"
+                    style={{ color: '#8B6E4E', fontFamily: themeFonts.body }}
+                  >
+                    Portfolio
+                  </span>
+                  <div className="w-12 h-[1px] bg-[#8B6E4E]/30" />
+                </div>
+                <h1
+                  className="text-4xl lg:text-5xl font-serif leading-tight"
+                  style={{ color: themeColors.lightPrimaryText, fontFamily: themeFonts.heading }}
                 >
-                  Portfolio
-                </span>
-                <div className="w-12 h-[1px]" style={{ backgroundColor: `${themeColors.primaryButton}40` }} />
+                  Our Projects
+                </h1>
               </div>
-              
-              <h1 
-                className="text-4xl lg:text-5xl font-serif leading-tight"
-                style={{ color: themeColors.lightPrimaryText, fontFamily: themeFonts.heading }}
+              <p
+                className="max-w-sm text-base font-light leading-relaxed opacity-70"
+                style={{ color: themeColors.lightSecondaryText, fontFamily: themeFonts.body }}
               >
-                Our Projects
-              </h1>
-            </div>
-
-            <div
-              className="max-w-sm text-base font-light leading-relaxed opacity-70"
-              style={{ color: themeColors.lightSecondaryText, fontFamily: themeFonts.body }}
-            >
-              Explore our portfolio of work showcasing our expertise and dedication to excellence.
+                Explore our portfolio of work showcasing our expertise and dedication to excellence.
+              </p>
             </div>
           </div>
+        )}
 
-          {/* Projects Grid - Editorial Gallery Style */}
+        <div className={cn('container mx-auto px-6 lg:px-12 pb-16 lg:pb-24', !useCmsIntro && 'pt-4')}>
           {publishedProjects.length === 0 ? (
             <div className="text-center py-16">
               <p style={{ color: themeColors.secondaryText, fontFamily: themeFonts.body }}>
@@ -91,21 +96,17 @@ export default function ProjectsListingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
               {publishedProjects.map((project, idx) => {
                 const isEven = idx % 2 === 0;
-                
+
                 return (
-                  <div 
+                  <div
                     key={project._id}
-                    className={cn(
-                      "group relative flex flex-col",
-                      !isEven && "md:mt-24"
-                    )}
+                    className={cn('group relative flex flex-col', !isEven && 'md:mt-24')}
                   >
-                    <Link 
-                      href={`/project-detail/${project.slug}`} 
+                    <Link
+                      href={`/project-detail/${project.slug}`}
                       className="block overflow-hidden relative aspect-[4/5] rounded-sm"
                       style={{ backgroundColor: `${themeColors.secondaryText}15` }}
                     >
-                      {/* Image with slow zoom on hover */}
                       {project.featuredImage?.url ? (
                         <img
                           src={getImageSrc(project.featuredImage.url)}
@@ -113,39 +114,33 @@ export default function ProjectsListingPage() {
                           className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
                         />
                       ) : (
-                        <div 
+                        <div
                           className="w-full h-full flex items-center justify-center"
                           style={{ backgroundColor: `${themeColors.secondaryText}15` }}
                         >
                           <span style={{ color: themeColors.secondaryText }}>No Image</span>
                         </div>
                       )}
-                      
-                      {/* Subtle Gradient Overlay */}
-                      <div 
+
+                      <div
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         style={{ background: `linear-gradient(to top, ${themeColors.darkPrimaryText}40, transparent, transparent)` }}
                       />
-                      
-                      {/* Floating Action Button */}
-                      <div 
+
+                      <div
                         className="absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 shadow-xl"
                         style={{ backgroundColor: themeColors.pageBackground }}
                       >
-                        <ArrowUpRight 
-                          className="w-5 h-5" 
-                          style={{ color: themeColors.darkPrimaryText }}
-                        />
+                        <ArrowUpRight className="w-5 h-5" style={{ color: themeColors.darkPrimaryText }} />
                       </div>
 
-                      {/* Category Badge - Floating */}
                       {project.category && (
-                        <div 
+                        <div
                           className="absolute bottom-6 left-6 px-3 py-1.5 rounded-full text-[10px] font-medium uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0"
-                          style={{ 
+                          style={{
                             backgroundColor: `${themeColors.primaryButton}20`,
                             color: themeColors.primaryButton,
-                            backdropFilter: 'blur(8px)'
+                            backdropFilter: 'blur(8px)',
                           }}
                         >
                           {project.category}
@@ -153,9 +148,8 @@ export default function ProjectsListingPage() {
                       )}
                     </Link>
 
-                    {/* Content Underlay */}
                     <div className="mt-8">
-                      <div 
+                      <div
                         className="flex items-center justify-between border-b pb-4"
                         style={{ borderColor: `${themeColors.secondaryText}15` }}
                       >
@@ -165,14 +159,14 @@ export default function ProjectsListingPage() {
                         >
                           {project.title}
                         </h3>
-                        <span 
+                        <span
                           className="text-[10px] tracking-widest uppercase font-bold opacity-40"
                           style={{ color: themeColors.secondaryText }}
                         >
                           Explore
                         </span>
                       </div>
-                      
+
                       {project.shortDescription && (
                         <div
                           className="mt-4 text-base font-light leading-relaxed opacity-60 max-w-md"
@@ -183,7 +177,7 @@ export default function ProjectsListingPage() {
                       )}
 
                       {project.clientName && (
-                        <div 
+                        <div
                           className="mt-4 text-xs tracking-wider uppercase"
                           style={{ color: themeColors.secondaryText, fontFamily: themeFonts.body }}
                         >

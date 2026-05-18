@@ -5,9 +5,11 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
 import { projectApi } from '@/app/lib/api';
-import { Project } from '@/app/lib/types';
+import { Page, Project } from '@/app/lib/types';
 import { Header } from '@/app/components/layout/Header';
 import { Footer } from '@/app/components/layout/Footer';
+import { HeroSection } from '@/app/components/sections/HeroSection';
+import { ProjectSection } from '@/app/components/sections/ProjectSection';
 import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 import { getImageSrc } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
@@ -19,7 +21,9 @@ import { cn } from '@/app/lib/utils';
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectSlug = params.projectSlug as string;
-  const { site, projects, loading: siteLoading } = useWebBuilder();
+  const { site, pages, projects, loading: siteLoading } = useWebBuilder();
+  const projectPage = pages.find((p: Page) => p.pageType === 'project-detail');
+  const useCmsIntro = projectPage?.projectSection?.enabled;
   const themeColors = useThemeColors();
   const themeFonts = useThemeFonts();
 
@@ -104,20 +108,24 @@ export default function ProjectDetailPage() {
       />
       <Header />
 
-      <main className="pt-32 pb-16 lg:pt-40 lg:pb-24">
-        <div className="container mx-auto px-6 lg:px-12">
-          
-          {/* Editorial Header */}
+      <main className="pb-16 lg:pb-24">
+        {projectPage?.hero?.enabled && <HeroSection hero={projectPage.hero} />}
+        {useCmsIntro && (
+          <ProjectSection projectSection={projectPage?.projectSection} className="pt-32 lg:pt-40" />
+        )}
+
+        <div className={cn('container mx-auto px-6 lg:px-12', useCmsIntro ? 'pt-8' : 'pt-32 lg:pt-40')}>
+          {!useCmsIntro && (
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 lg:mb-24">
             <div className="max-w-2xl">
               <div className="mb-6 flex items-center gap-3">
                 <span 
                   className="text-[10px] tracking-[0.4em] uppercase font-bold"
-                  style={{ color: themeColors.primaryButton, fontFamily: themeFonts.body }}
+                  style={{ color: '#8B6E4E', fontFamily: themeFonts.body }}
                 >
                   Project Detail
                 </span>
-                <div className="w-12 h-[1px]" style={{ backgroundColor: `${themeColors.primaryButton}40` }} />
+                <div className="w-12 h-[1px] bg-[#8B6E4E]/30" />
               </div>
               
               <h1 
@@ -146,6 +154,26 @@ export default function ProjectDetailPage() {
               </Link>
             </div>
           </div>
+          )}
+
+          {useCmsIntro && (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-12 lg:mb-16">
+              <h1
+                className="text-3xl lg:text-4xl font-serif leading-tight"
+                style={{ color: themeColors.lightPrimaryText, fontFamily: themeFonts.heading }}
+              >
+                {project.title}
+              </h1>
+              <Link
+                href="/project-detail"
+                className="group inline-flex items-center gap-2 text-sm font-medium transition-all shrink-0"
+                style={{ color: themeColors.primaryButton, fontFamily: themeFonts.body }}
+              >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                Back to Projects
+              </Link>
+            </div>
+          )}
 
           {/* Featured Image - Full Width */}
           {project.featuredImage?.url && (

@@ -14,6 +14,7 @@ import { CTASection } from '@/app/components/sections/CTASection';
 import { WhyChooseUsSection } from '@/app/components/sections/WhyChooseUsSection';
 import { CompanyDetailSection } from '@/app/components/sections/CompanyDetailSection';
 import { ProjectsSection } from '@/app/components/sections/ProjectsSection';
+import { ProjectSection } from '@/app/components/sections/ProjectSection';
 import { CTA2Section } from '@/app/components/sections/CTA2Section';
 import { CTA3Section } from '@/app/components/sections/CTA3Section';
 import { ServingAreasSection } from '@/app/components/sections/ServingAreasSection';
@@ -151,6 +152,7 @@ export default function HomeClient() {
         <WhyChooseUsSection whyChooseUsSection={displayPage.whyChooseUsSection} />
         <CTA3Section cta3Section={displayPage.cta3Section} />
         <CompanyDetailSection companyDetailSection={displayPage.companyDetailSection} />
+        <ProjectSection projectSection={displayPage.projectSection} />
         <ProjectsSection projectsSection={displayPage.projectsSection} />
         <CTA2Section cta2Section={displayPage.cta2Section} />
         
