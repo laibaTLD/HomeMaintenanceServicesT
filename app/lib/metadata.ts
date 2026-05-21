@@ -22,6 +22,10 @@ export function generateMetadata(seoData: SEOData, site?: Site): Metadata {
     keywords: keywords?.join(', ') || site?.seo?.keywords?.join(', '),
   }
 
+  if (site?.seo?.faviconUrl) {
+    metadata.icons = { icon: site.seo.faviconUrl }
+  }
+
   // Add Open Graph metadata
   if (ogImageUrl || site?.seo?.ogImageUrl) {
     metadata.openGraph = {
