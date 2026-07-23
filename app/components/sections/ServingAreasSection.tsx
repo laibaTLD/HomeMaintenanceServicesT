@@ -34,13 +34,13 @@ export const ServingAreasSection: React.FC<ServingAreasSectionProps> = ({
 
   return (
     <section
-      className={cn('py-24 lg:py-32', className)}
+      className={cn('py-12 lg:py-16', className)}
       style={{ backgroundColor: themeColors.sectionBackground }}
     >
       <div className="container mx-auto px-6">
         
         {/* Editorial Header Block */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10">
           <div className="max-w-2xl">
             {/* Heritage Label */}
             <div className="mb-6 flex items-center gap-3">

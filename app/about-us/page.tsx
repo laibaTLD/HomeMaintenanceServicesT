@@ -14,13 +14,11 @@ import { Page } from '@/app/lib/types';
 export default function AboutPage() {
   const { site } = useWebBuilder();
   const [aboutPage, setAboutPage] = useState<Page | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAboutPage = async () => {
       try {
         if (!site?._id) {
-          setLoading(false);
           return;
         }
 
@@ -71,8 +69,6 @@ export default function AboutPage() {
         }
       } catch (err) {
         console.error('Error fetching about page:', err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -86,12 +82,7 @@ export default function AboutPage() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {loading ? (
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-          </div>
-        ) : (
-          <>
+        <>
             {/* Hero Section - only renders if enabled */}
             {aboutPage?.hero && <HeroSection hero={aboutPage.hero} />}
 
@@ -107,7 +98,6 @@ export default function AboutPage() {
             {/* CTA2 Section - only renders if enabled */}
             {aboutPage?.cta2Section && <CTA2Section cta2Section={aboutPage.cta2Section} />}
           </>
-        )}
       </main>
 
       {/* Footer */}

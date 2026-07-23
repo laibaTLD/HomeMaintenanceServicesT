@@ -28,7 +28,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ aboutSection, classN
 
   return (
     <section 
-      className={cn('py-20 lg:py-32 overflow-hidden', className)}
+      className={cn('py-12 lg:py-16 overflow-hidden', className)}
       style={{ backgroundColor: themeColors.pageBackground || '#F5F2ED' }}
     >
       <div className="container mx-auto px-6 lg:px-12">

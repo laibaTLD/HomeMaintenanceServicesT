@@ -56,7 +56,7 @@ export const CTASection: React.FC<CTASectionProps> = ({ ctaSection, className })
     return (
         <section
             ref={sectionRef}
-            className={cn('relative min-h-[60vh] flex items-center justify-center overflow-hidden py-20', className)}
+            className={cn('relative min-h-[40vh] flex items-center justify-center overflow-hidden py-12 lg:py-16', className)}
         >
             {/* Background with slow zoom/float animation */}
             <div 

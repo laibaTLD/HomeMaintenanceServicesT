@@ -11,13 +11,11 @@ import { Page } from '@/app/lib/types';
 export default function TestimonialsPage() {
   const { site } = useWebBuilder();
   const [testimonialsPage, setTestimonialsPage] = useState<Page | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTestimonialsPage = async () => {
       try {
         if (!site?._id) {
-          setLoading(false);
           return;
         }
 
@@ -67,8 +65,6 @@ export default function TestimonialsPage() {
         }
       } catch (err) {
         console.error('Error fetching testimonials page:', err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -122,19 +118,13 @@ export default function TestimonialsPage() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {loading ? (
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-          </div>
-        ) : (
-          <>
+        <>
             {/* Hero Section */}
             <HeroSection hero={hero} />
 
             {/* Testimonials Section */}
             <TestimonialsSection testimonialsSection={testimonialsSection} />
           </>
-        )}
       </main>
 
       {/* Footer */}

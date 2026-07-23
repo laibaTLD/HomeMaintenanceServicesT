@@ -21,7 +21,7 @@ export const ProjectSection: React.FC<ProjectSectionProps> = ({ projectSection, 
 
   return (
     <section
-      className={cn('py-12 lg:py-16', className)}
+      className={cn('py-10 lg:py-12', className)}
       style={{ backgroundColor: themeColors.pageBackground || '#F5F2ED' }}
     >
       <div className="container mx-auto px-6 lg:px-12">

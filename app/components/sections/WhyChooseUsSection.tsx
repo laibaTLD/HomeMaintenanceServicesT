@@ -23,13 +23,13 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ whyChoos
 
   return (
     <section 
-      className={cn('py-20 lg:py-32', className)} 
+      className={cn('py-12 lg:py-16', className)} 
       style={{ backgroundColor: themeColors.pageBackground || '#F5F2ED' }}
     >
       <div className="container mx-auto px-6 lg:px-12">
         {/* Header Area */}
         {(whyChooseUsSection.title || whyChooseUsSection.description) && (
-          <div className="mb-16 lg:mb-24 text-center">
+          <div className="mb-10 lg:mb-12 text-center">
              <div className="mb-6 flex items-center justify-center gap-3">
                 <span 
                     className="text-[10px] tracking-[0.4em] uppercase font-bold"

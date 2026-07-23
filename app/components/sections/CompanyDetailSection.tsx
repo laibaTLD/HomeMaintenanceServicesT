@@ -23,13 +23,13 @@ export const CompanyDetailSection: React.FC<CompanyDetailSectionProps> = ({ comp
 
   return (
     <section 
-      className={cn('py-24 lg:py-32', className)} 
+      className={cn('py-12 lg:py-16', className)} 
       style={{ backgroundColor: themeColors.pageBackground }}
     >
       <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
         {/* Header Section */}
         {(companyDetailSection.title || companyDetailSection.description) && (
-          <div className="mb-20 max-w-4xl">
+          <div className="mb-10 max-w-4xl">
             <span 
               className="text-[10px] tracking-[0.4em] uppercase font-bold opacity-60 block mb-6"
               style={{ color: themeColors.lightPrimaryText }}
@@ -57,7 +57,7 @@ export const CompanyDetailSection: React.FC<CompanyDetailSectionProps> = ({ comp
 
         {/* Details Grid */}
         {details.length > 0 && (
-          <div className="space-y-32 lg:space-y-48">
+          <div className="space-y-16 lg:space-y-24">
             {details.map((d, idx) => {
               const title = d?.title || d?.label;
               const description = d?.description || d?.value;
@@ -68,24 +68,24 @@ export const CompanyDetailSection: React.FC<CompanyDetailSectionProps> = ({ comp
                 <div
                   key={idx}
                   className={cn(
-                    "flex flex-col lg:items-center gap-12 lg:gap-24",
-                    isEven ? "lg:flex-row" : "lg:flex-row-reverse"
+                    "grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch",
+                    !isEven && "[&>*:first-child]:lg:order-2"
                   )}
                 >
-                  {/* Image Side */}
-                  <div className="w-full lg:w-3/5">
+                  {/* Image Side — height follows content column */}
+                  <div className="w-full lg:col-span-3 relative min-h-[220px] overflow-hidden">
                     {imageUrl ? (
-                      <div className="relative group overflow-hidden">
+                      <div className="relative group h-full min-h-[220px]">
                         <img
                           src={getImageSrc(imageUrl)}
                           alt={d?.image?.altText || 'Detail image'}
-                          className="w-full h-[300px] md:h-[400px] lg:h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
                       </div>
                     ) : (
                       <div 
-                        className="w-full h-[250px] md:h-[300px] lg:h-[400px] rounded-[2.5rem] flex items-center justify-center"
+                        className="w-full h-full min-h-[220px] flex items-center justify-center"
                         style={{ backgroundColor: `${themeColors.inactive}15` }}
                       >
                          <span className="opacity-20 text-4xl font-bold">0{idx + 1}</span>
@@ -93,9 +93,9 @@ export const CompanyDetailSection: React.FC<CompanyDetailSectionProps> = ({ comp
                     )}
                   </div>
 
-                  {/* Content Side */}
-                  <div className="w-full lg:w-2/5">
-                    <div className="max-w-md">
+                  {/* Content Side — drives the row height */}
+                  <div className="w-full lg:col-span-2 flex flex-col justify-center">
+                    <div className="w-full">
                       <span 
                         className="text-4xl lg:text-5xl font-serif italic mb-6 block"
                         style={{ color: themeColors.primaryButton }}

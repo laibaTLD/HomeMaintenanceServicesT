@@ -184,12 +184,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contactSection, 
 
   return (
     <section 
-      className={cn('py-20 lg:py-28', className)} 
+      className={cn('py-12 lg:py-16', className)} 
       style={{ backgroundColor: themeColors.pageBackground }}
     >
       <div className="container mx-auto px-6">
         {/* Header Section */}
-        <div className="mb-16">
+        <div className="mb-10">
           <span 
             className="text-sm uppercase tracking-widest font-medium"
             style={{ color: themeColors.primaryButton }}

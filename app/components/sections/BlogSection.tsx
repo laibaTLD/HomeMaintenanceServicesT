@@ -6,7 +6,6 @@ import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
 import { getImageSrc, cn } from '@/app/lib/utils';
 import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
 import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
-import { CardLoader } from '@/app/components/ui/SkeletonLoader';
 import { ArrowUpRight } from 'lucide-react';
 
 interface BlogSectionProps {
@@ -23,27 +22,19 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
     const displayPosts = blogPosts.slice(0, blogSection.postsToShow || 3);
 
     if (loading && blogPosts.length === 0) {
-        return (
-            <section className={cn('py-24', className)} style={{ backgroundColor: themeColors.pageBackground }}>
-                <div className="container mx-auto px-6">
-                    <div className="grid md:grid-cols-3 gap-12">
-                        {[1, 2, 3].map((i) => <CardLoader key={i} />)}
-                    </div>
-                </div>
-            </section>
-        );
+        return null;
     }
 
     return (
         /* The outer div ensures the background starts from the very top for the Navbar */
         <div style={{ backgroundColor: themeColors.pageBackground }}>
             <section 
-                className={cn('pt-32 pb-24 lg:pt-48 lg:pb-32', className)} 
+                className={cn('py-12 lg:py-16', className)} 
                 style={{ backgroundColor: themeColors.pageBackground }}
             >
                 <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
                     {/* Editorial Header */}
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-20 gap-8">
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 gap-8">
                         <div className="max-w-2xl">
                             <span 
                                 className="text-[10px] tracking-[0.4em] uppercase font-bold opacity-60 block mb-6"

@@ -61,14 +61,7 @@ export default function ProjectDetailPage() {
   }, [site, siteLoading, projectSlug]);
 
   if (siteLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: themeColors.pageBackground }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: themeColors.primaryButton }}></div>
-          <p style={{ color: themeColors.secondaryText }}>Loading project...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (error || !project) {

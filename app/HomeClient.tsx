@@ -23,7 +23,7 @@ import { BlogSection } from '@/app/components/sections/BlogSection';
 import { ContactSection } from './components/sections/ContactSection';
 
 export default function HomeClient() {
-  const { site, pages, testimonials, loading, error } = useWebBuilder();
+  const { site, pages, testimonials } = useWebBuilder();
 
   // Get theme colors from site
   const themeColors = {
@@ -47,88 +47,14 @@ export default function HomeClient() {
     body: site?.theme?.bodyFont,
   };
 
-  if (loading && !site) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: themeColors.pageBackground }}
-      >
-        <div 
-          className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2"
-          style={{ 
-            borderTopColor: themeColors.primaryButton,
-            borderBottomColor: themeColors.primaryButton
-          }}
-        ></div>
-      </div>
-    );
-  }
-
-  if (error && !site) {
-    return (
-      <div 
-        className="min-h-screen flex items-center justify-center p-4"
-        style={{ backgroundColor: themeColors.pageBackground }}
-      >
-        <div 
-          className="p-6 rounded-lg max-w-lg text-center"
-          style={{ 
-            backgroundColor: '#FEE2E2',
-            borderColor: themeColors.secondary,
-            borderWidth: '1px'
-          }}
-        >
-          <h2 
-            className="text-xl font-bold mb-2"
-            style={{ 
-              color: themeColors.secondary,
-              fontFamily: themeFonts.heading
-            }}
-          >
-            Error
-          </h2>
-          <p 
-            style={{ 
-              color: themeColors.secondary,
-              fontFamily: themeFonts.body
-            }}
-          >
-            {error}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const homePage = pages.find((p: Page) => p.pageType === 'home');
-  const displayPage = homePage;
 
-  if (!displayPage) {
-    return (
-      <div 
-        className="min-h-screen flex flex-col items-center justify-center p-4"
-        style={{ backgroundColor: themeColors.pageBackground }}
-      >
-        <h2 
-          className="text-2xl font-bold mb-4"
-          style={{ 
-            color: themeColors.mainText,
-            fontFamily: themeFonts.heading
-          }}
-        >
-          No Home Page Found
-        </h2>
-        <p 
-          style={{ 
-            color: themeColors.secondaryText,
-            fontFamily: themeFonts.body
-          }}
-        >
-          Please create a page with type "home" in the site builder.
-        </p>
-      </div>
-    );
+  // Don't flash empty/error UI while site or home page is still loading
+  if (!site || !homePage) {
+    return null;
   }
+
+  const displayPage = homePage;
 
   return (
     <div 

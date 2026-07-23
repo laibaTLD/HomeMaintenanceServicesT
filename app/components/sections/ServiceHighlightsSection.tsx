@@ -60,7 +60,7 @@ export const ServiceHighlightsSection: React.FC<ServiceHighlightsSectionProps> =
 
   return (
     <section
-      className={cn('py-16 lg:py-24 relative overflow-hidden', className)}
+      className={cn('py-12 lg:py-16 relative overflow-hidden', className)}
       style={{
         backgroundColor: serviceHighlightsSection.backgroundColor || themeColors.sectionBackground
       }}

@@ -65,7 +65,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ gallerySection, 
 
     return (
         <section
-            className={cn('py-16 lg:py-24', className)}
+            className={cn('py-12 lg:py-16', className)}
             style={{ backgroundColor: themeColors.pageBackground }}
         >
             <div className="container mx-auto px-4">

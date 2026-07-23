@@ -69,20 +69,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projectsSectio
   if (!projectsSection?.enabled) return null;
 
   if (loading || webBuilderLoading) {
-    return (
-      <section className={cn('py-20 lg:py-32 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-1/3" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-[4/5] bg-gray-200 rounded" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   if (sectionProjects.length === 0) return null;
@@ -92,9 +79,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projectsSectio
   const showViewAll = !hasSelectedIds && publishedCount > HOME_PREVIEW_LIMIT;
 
   return (
-    <section className={cn('py-20 lg:py-32 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
+    <section className={cn('py-12 lg:py-16 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 lg:mb-24">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 lg:mb-12">
           <div className="max-w-2xl">
             <div className="mb-6 flex items-center gap-3">
               <span

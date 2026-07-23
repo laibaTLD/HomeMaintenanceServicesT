@@ -67,7 +67,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
 
     return (
         <section
-            className={cn('relative py-24 lg:py-32 overflow-hidden', className)}
+            className={cn('relative py-12 lg:py-16 overflow-hidden', className)}
             style={{ backgroundColor: themeColors.sectionBackground }}
         >
             <div className="container mx-auto px-6">
@@ -103,7 +103,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
                 </div>
 
                 {/* Main Carousel Display */}
-                <div className="relative mt-16">
+                <div className="relative mt-8">
                     <div
                         ref={trackRef}
                         className="flex gap-12 lg:gap-24 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-12 items-center"

@@ -74,11 +74,7 @@ export default function PageSlugClient({ pageSlug: pageSlugProp }: PageSlugClien
   }, [pageSlug, pages, setCurrentPage, loadServiceAreaPage]);
 
   if (loading || serviceAreaLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: themeColors.pageBackground }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto" style={{ borderColor: themeColors.primaryButton }}></div>
-      </div>
-    );
+    return null;
   }
 
   const displayPage = currentPage || serviceAreaPage;

@@ -73,30 +73,14 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesSectio
   // Always use services from WebBuilder provider
   const displayServices = services;
 
-  // Show loading state if services are still loading
+  // Skip skeleton — render nothing until services are ready
   if (loading && services.length === 0) {
-    return (
-      <section className={cn('py-16 lg:py-24', className)} style={{ backgroundColor: themeColors.sectionBackground }}>
-        <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-start gap-8 p-8 rounded-2xl bg-gray-100 animate-pulse">
-                <div className="w-12 h-8 bg-gray-300 rounded" />
-                <div className="flex-1 space-y-3">
-                  <div className="h-8 bg-gray-300 rounded w-64" />
-                  <div className="h-4 bg-gray-300 rounded w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
     <section 
-      className={cn('py-12 md:py-16 lg:py-24 xl:py-32', className)}
+      className={cn('py-12 lg:py-16', className)}
       style={{ backgroundColor: themeColors.sectionBackground }}
     >
       <div className="container mx-auto px-4 md:px-6 lg:px-8 xl:px-12 max-w-6xl xl:max-w-7xl">
