@@ -103,13 +103,13 @@ export const Header: React.FC = () => {
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-[50] transition-all duration-500 ${
-        isScrolled ? 'py-4' : 'py-8'
+        isScrolled ? 'py-2' : 'py-3'
       }`}
     >
       <div className="container mx-auto px-6 lg:px-12">
         {/* Main Nav Pill - Glassmorphism effect */}
         <div 
-          className={`flex items-center justify-between px-6 lg:px-10 h-20 rounded-full border transition-all duration-500 shadow-2xl ${
+          className={`flex items-center justify-between px-4 lg:px-6 h-14 rounded-full border transition-all duration-500 shadow-2xl ${
             isScrolled 
               ? 'bg-white/10 backdrop-blur-xl border-black/5' 
               : 'bg-white/90 backdrop-blur-md border-white/20'
@@ -117,16 +117,16 @@ export const Header: React.FC = () => {
           style={{ color: isScrolled ? themeColors.darkPrimaryText : themeColors.primaryButton }}
         >
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Link href="/" className="flex items-center gap-2 shrink-0">
             {site.theme.logoUrl ? (
               <img
                 src={getImageSrc(site.theme.logoUrl)}
                 alt={logoAlt}
-                className="h-10 w-auto object-contain"
+                className="h-7 w-auto object-contain"
               />
             ) : (
               <span 
-                className="text-xl font-black uppercase tracking-tighter"
+                className="text-base font-black uppercase tracking-tighter"
                 style={{ fontFamily: themeFonts.heading, color: isScrolled ? themeColors.darkPrimaryText : themeColors.lightPrimaryText }}
               >
                 {site.business.name ? renderInlineText(site.business.name) : 'Buildify'}
@@ -135,7 +135,7 @@ export const Header: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-6">
             {navPages.map((page) => {
               // Check if this is the services page
               if (page.pageType === 'service-list') {
@@ -351,7 +351,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-2">
             <Link
               href={contactPage ? getPagePath(contactPage.pageType) : '#'}
-              className="hidden md:flex items-center h-12 px-8 rounded-full font-bold text-[10px] uppercase tracking-[0.2em] transition-all"
+              className="hidden md:flex items-center h-9 px-5 rounded-full font-bold text-[10px] uppercase tracking-[0.2em] transition-all"
               style={{
                 backgroundColor: isScrolled ? themeColors.darkPrimaryText : themeColors.primaryButton,
                 color: isScrolled ? themeColors.primaryButton : themeColors.darkPrimaryText
@@ -362,22 +362,22 @@ export const Header: React.FC = () => {
             
             {/* Arrow Button - Architectural style */}
             <div 
-              className="w-12 h-12 flex items-center justify-center rounded-full border transition-all"
+              className="w-9 h-9 flex items-center justify-center rounded-full border transition-all"
               style={{ 
                 borderColor: isScrolled ? `${themeColors.darkPrimaryText}20` : `${themeColors.primaryButton}30`,
                 color: isScrolled ? themeColors.lightPrimaryText : themeColors.primaryButton
               }}
             >
-              <ArrowUpRight size={18} />
+              <ArrowUpRight size={16} />
             </div>
 
             {/* Mobile Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 transition-colors"
+              className="lg:hidden p-1.5 transition-colors"
               style={{ color: isScrolled ? themeColors.darkPrimaryText : themeColors.primaryButton }}
             >
-              <Menu size={24} />
+              <Menu size={20} />
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqSection, className })
 
     return (
         <section
-            className={cn('py-12 lg:py-16 overflow-hidden', className)}
+            className={cn('py-8 lg:py-10 overflow-hidden', className)}
             style={{ backgroundColor: themeColors.pageBackground }}
         >
             <div className="container mx-auto px-6 lg:px-12">

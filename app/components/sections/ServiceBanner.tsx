@@ -55,7 +55,7 @@ export const ServiceBanner: React.FC<ServiceBannerProps> = ({ service }) => {
             />
 
             {/* Banner Content */}
-            <div className="relative z-10 text-center px-4 py-16">
+            <div className="relative z-10 text-center px-4 py-10">
                 <h1
                     className="text-4xl lg:text-6xl font-bold text-white mb-4"
                     style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}

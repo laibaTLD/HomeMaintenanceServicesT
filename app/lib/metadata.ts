@@ -1,5 +1,20 @@
 import type { Metadata } from 'next'
 import { Page, Site, Service, BlogPost, ServiceAreaPage } from './types'
+import { getImageSrc } from './utils'
+
+/** Prefer same-origin /uploads proxy so the browser can load the favicon reliably. */
+function resolveFaviconHref(faviconUrl: string): string {
+  const resolved = getImageSrc(faviconUrl)
+  if (!resolved) return ''
+
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, '')
+  if (apiBase && resolved.startsWith(apiBase)) {
+    const path = resolved.slice(apiBase.length)
+    return path.startsWith('/') ? path : `/${path}`
+  }
+
+  return resolved
+}
 
 interface SEOData {
   title?: string
@@ -23,7 +38,14 @@ export function generateMetadata(seoData: SEOData, site?: Site): Metadata {
   }
 
   if (site?.seo?.faviconUrl) {
-    metadata.icons = { icon: site.seo.faviconUrl }
+    const href = resolveFaviconHref(site.seo.faviconUrl)
+    if (href) {
+      metadata.icons = {
+        icon: [{ url: href }],
+        shortcut: href,
+        apple: href,
+      }
+    }
   }
 
   // Add Open Graph metadata

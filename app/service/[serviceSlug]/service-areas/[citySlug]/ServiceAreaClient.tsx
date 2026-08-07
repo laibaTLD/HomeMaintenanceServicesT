@@ -109,11 +109,23 @@ export default function ServiceAreaClient({ serviceSlug: serviceSlugProp, citySl
         {/* 6. Service Overview */}
         <ServiceOverview overview={serviceOverviewData} />
         
-        {/* 7. Service Details */}
-        <ServiceDetails details={serviceDetailsData} />
-        
-        {/* 8. Why Choose Us */}
-        <WhyChooseUs whyChooseUs={whyChooseUsData} />
+        {/* 7–8. Why Choose Us (left) + Service Details (right) */}
+        {(whyChooseUsData || serviceDetailsData) && (
+          <div
+            className={
+              whyChooseUsData && serviceDetailsData
+                ? 'grid grid-cols-1 md:grid-cols-2 md:items-stretch'
+                : 'grid grid-cols-1'
+            }
+          >
+            {whyChooseUsData && (
+              <WhyChooseUs whyChooseUs={whyChooseUsData} className="h-full min-h-0 w-full" />
+            )}
+            {serviceDetailsData && (
+              <ServiceDetails details={serviceDetailsData} className="h-full min-h-0 w-full" />
+            )}
+          </div>
+        )}
         
         {/* 9. FAQs */}
         <FAQs faqs={serviceAreaPage.faqs} />

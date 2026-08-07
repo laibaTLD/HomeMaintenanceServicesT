@@ -34,7 +34,7 @@ export const ServingAreasSection: React.FC<ServingAreasSectionProps> = ({
 
   return (
     <section
-      className={cn('py-12 lg:py-16', className)}
+      className={cn('py-8 lg:py-10', className)}
       style={{ backgroundColor: themeColors.sectionBackground }}
     >
       <div className="container mx-auto px-6">
@@ -75,7 +75,7 @@ export const ServingAreasSection: React.FC<ServingAreasSectionProps> = ({
 
         {/* Areas Display - Clean Architectural Layout */}
         <div className="max-w-7xl">
-          <div className="flex flex-wrap gap-y-8 sm:gap-y-12 gap-x-8 sm:gap-x-12 lg:gap-x-16 border-t pt-12 sm:pt-16" style={{ borderColor: `${themeColors.inactive}30` }}>
+          <div className="flex flex-wrap gap-y-8 sm:gap-y-12 gap-x-8 sm:gap-x-12 lg:gap-x-16 border-t pt-8 sm:pt-10" style={{ borderColor: `${themeColors.inactive}30` }}>
             {areas.map((area, idx) => {
               const citySlug = String(area)
                 .toLowerCase()

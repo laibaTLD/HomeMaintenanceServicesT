@@ -55,23 +55,35 @@ export const ServingAreasdetailSection: React.FC<ServingAreasdetailSectionProps>
       {/* Our Services Section */}
       {data.ourServices && <OurServices services={data.ourServices} />}
 
+      {/* CTA Section */}
+      {data.cta && <CTA cta={data.cta} />}
+
       {/* Service Overview Section */}
       {data.serviceOverview && <ServiceOverview overview={data.serviceOverview} />}
 
-      {/* Service Details Section */}
-      {data.serviceDetails && <ServiceDetails details={data.serviceDetails} />}
-
-      {/* Why Choose Us Section */}
-      {data.whyChooseUs && <WhyChooseUs whyChooseUs={data.whyChooseUs} />}
+      {/* Why Choose Us (left) + Service Details (right) */}
+      {(data.whyChooseUs || data.serviceDetails) && (
+        <div
+          className={
+            data.whyChooseUs && data.serviceDetails
+              ? 'grid grid-cols-1 md:grid-cols-2 md:items-stretch'
+              : 'grid grid-cols-1'
+          }
+        >
+          {data.whyChooseUs && (
+            <WhyChooseUs whyChooseUs={data.whyChooseUs} className="h-full min-h-0 w-full" />
+          )}
+          {data.serviceDetails && (
+            <ServiceDetails details={data.serviceDetails} className="h-full min-h-0 w-full" />
+          )}
+        </div>
+      )}
 
       {/* FAQs Section */}
       {data.faqs && <FAQs faqs={data.faqs} />}
 
       {/* Serving Areas Section */}
       {data.servingAreas && <ServingAreas service={data.servingAreas} />}
-
-      {/* CTA Section */}
-      {data.cta && <CTA cta={data.cta} />}
     </div>
   );
 };

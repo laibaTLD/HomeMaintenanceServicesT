@@ -80,7 +80,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesSectio
 
   return (
     <section 
-      className={cn('py-12 lg:py-16', className)}
+      className={cn('py-8 lg:py-10', className)}
       style={{ backgroundColor: themeColors.sectionBackground }}
     >
       <div className="container mx-auto px-4 md:px-6 lg:px-8 xl:px-12 max-w-6xl xl:max-w-7xl">

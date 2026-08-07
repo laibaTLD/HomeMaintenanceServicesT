@@ -1,141 +1,60 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
-import { cn } from '@/app/lib/utils';
-import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
-import { Plus, Minus } from 'lucide-react';
+import React from 'react';
+import type { Page } from '@/app/lib/types';
+import { FAQSection } from '@/app/components/sections/FAQSection';
 
 interface FAQsProps {
-  faqs: any;
+  faqs: unknown;
   className?: string;
 }
 
-export const FAQs: React.FC<FAQsProps> = ({ faqs, className }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const themeColors = useThemeColors();
-  const themeFonts = useThemeFonts();
+type FaqSectionData = NonNullable<Page['faqSection']>;
 
-  // More permissive check - render if there's any content
-  if (!faqs || (!faqs.title && !faqs.description && (!faqs.items || faqs.items.length === 0))) return null;
+function normalizeFaqSection(faqs: unknown): FaqSectionData | null {
+  if (!faqs) return null;
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  if (Array.isArray(faqs)) {
+    const items = faqs.filter(
+      (item) =>
+        item &&
+        typeof item === 'object' &&
+        ((item as { question?: unknown }).question || (item as { answer?: unknown }).answer)
+    ) as FaqSectionData['items'];
+    if (items.length === 0) return null;
+    return { enabled: true, items };
+  }
+
+  if (typeof faqs !== 'object') return null;
+
+  const data = faqs as {
+    enabled?: boolean;
+    title?: FaqSectionData['title'];
+    description?: FaqSectionData['description'];
+    items?: FaqSectionData['items'];
   };
 
-  return (
-    <section
-      className={cn('py-24 lg:py-32 overflow-hidden', className)}
-      style={{ backgroundColor: themeColors.pageBackground }}
-    >
-      <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid lg:grid-cols-12 gap-16 lg:gap-24">
-          
-          {/* Left Column: Editorial Header */}
-          <div className="lg:col-span-5">
-            <div className="sticky top-24 lg:top-32">
-              <div className="mb-6 flex items-center gap-3">
-                <span 
-                  className="text-[10px] tracking-[0.4em] uppercase font-bold"
-                  style={{ color: themeColors.primaryButton }}
-                >
-                  Common Enquiries
-                </span>
-                <div className="w-12 h-[1px]" style={{ backgroundColor: themeColors.primaryButton }} />
-              </div>
+  const items =
+    data.items?.filter((item) => item?.question || item?.answer) ??
+    [];
 
-              {faqs.title && (
-                <h2
-                  className="text-5xl lg:text-7xl leading-tight"
-                  style={{ 
-                    color: themeColors.lightPrimaryText 
-                  }}
-                >
-                  <TiptapRenderer content={faqs.title} />
-                </h2>
-              )}
+  if (data.enabled === false) return null;
+  if (!data.title && !data.description && items.length === 0) return null;
 
-              {faqs.description && (
-                <div
-                  className="mt-8 max-w-sm text-lg font-light leading-relaxed opacity-70"
-                  style={{ 
-                    color: themeColors.lightSecondaryText 
-                  }}
-                >
-                  <TiptapRenderer content={faqs.description} />
-                </div>
-              )}
-            </div>
-          </div>
+  return {
+    enabled: true,
+    title: data.title,
+    description: data.description,
+    items,
+  };
+}
 
-          {/* Right Column: Minimalist Accordion */}
-          <div className="lg:col-span-7">
-            <div className="space-y-0">
-              {faqs.items.map((item: any, index: number) => {
-                const isOpen = openIndex === index;
-                return (
-                  <div
-                    key={index}
-                    className="border-b transition-all duration-500"
-                    style={{ borderColor: `${themeColors.inactive}30` }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => toggle(index)}
-                      className="w-full flex items-center justify-between py-8 text-left group"
-                    >
-                      <div className="flex items-start gap-6">
-                        <span 
-                          className="text-[10px] mt-2 font-bold tracking-tighter opacity-30 group-hover:opacity-100 transition-opacity"
-                          style={{ color: themeColors.primaryButton }}
-                        >
-                          {(index + 1).toString().padStart(2, '0')}
-                        </span>
-                        <div
-                          className={cn(
-                            "text-xl lg:text-2xl transition-all duration-300",
-                            isOpen ? "italic" : ""
-                          )}
-                          style={{ 
-                            color: themeColors.lightPrimaryText 
-                          }}
-                        >
-                          <TiptapRenderer content={item.question} as="inline" />
-                        </div>
-                      </div>
+/** Service area FAQs — same layout as site FAQSection. */
+export const FAQs: React.FC<FAQsProps> = ({ faqs, className }) => {
+  const faqSection = normalizeFaqSection(faqs);
+  if (!faqSection) return null;
 
-                      <div 
-                        className="shrink-0 ml-4 transition-transform duration-500"
-                        style={{ color: themeColors.primaryButton }}
-                      >
-                        {isOpen ? <Minus strokeWidth={1.5} size={20} /> : <Plus strokeWidth={1.5} size={20} />}
-                      </div>
-                    </button>
-
-                    <div
-                      className={cn(
-                        "grid transition-all duration-500 ease-in-out",
-                        isOpen ? "grid-rows-[1fr] pb-8 opacity-100" : "grid-rows-[0fr] opacity-0"
-                      )}
-                    >
-                      <div className="overflow-hidden">
-                        <div
-                          className="pl-12 lg:pl-16 text-base lg:text-lg font-light leading-relaxed opacity-70 max-w-2xl"
-                          style={{ 
-                            color: themeColors.lightSecondaryText, 
-                          }}
-                        >
-                          <TiptapRenderer content={item.answer} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <FAQSection faqSection={faqSection} className={className} />;
 };
+
+export default FAQs;

@@ -29,7 +29,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogSection, className
         /* The outer div ensures the background starts from the very top for the Navbar */
         <div style={{ backgroundColor: themeColors.pageBackground }}>
             <section 
-                className={cn('py-12 lg:py-16', className)} 
+                className={cn('py-8 lg:py-10', className)} 
                 style={{ backgroundColor: themeColors.pageBackground }}
             >
                 <div className="container mx-auto px-6 lg:px-12 max-w-7xl">

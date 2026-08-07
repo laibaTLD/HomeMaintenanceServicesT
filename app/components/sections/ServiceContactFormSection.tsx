@@ -69,7 +69,7 @@ export const ServiceContactFormSection: React.FC<ServiceContactFormSectionProps>
 
     return (
         <section
-            className="py-16 lg:py-24"
+            className="py-10 lg:py-14"
             style={{ backgroundColor: themeColors.sectionBackground }}
         >
             <div className="container mx-auto px-4">

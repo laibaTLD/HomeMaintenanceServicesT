@@ -1,206 +1,240 @@
 'use client';
 
-import React from 'react';
+import { useMemo } from 'react';
+import { OptimizedImage, IMAGE_SIZES } from '@/app/components/ui/OptimizedImage';
 import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
-import { getImageSrc, cn } from '@/app/lib/utils';
-import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
-import { CheckCircle, Clock, Users, Award, ArrowRight } from 'lucide-react';
+import { tiptapToText } from '@/app/lib/seo';
+import { cn, getImageSrc } from '@/app/lib/utils';
+import { useScrollAnimation } from '@/app/hooks/useScrollAnimation';
+import { useSectionTheme } from '@/app/hooks/useSectionTheme';
+
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 interface ServiceOverviewProps {
-  overview: any;
+  overview: unknown;
   className?: string;
 }
 
-export const ServiceOverview: React.FC<ServiceOverviewProps> = ({ overview, className }) => {
-  const themeColors = useThemeColors();
-  const themeFonts = useThemeFonts();
+type OverviewData = {
+  title?: unknown;
+  description?: unknown;
+  imageUrl?: string;
+  imageAlt?: string;
+};
 
-  if (!overview || (!overview.title && !overview.description && !overview.keyPoints && !overview.stats)) return null;
+function normalizeImage(raw: unknown): { url: string; altText?: string } | undefined {
+  if (!raw) return undefined;
+  if (typeof raw === 'string' && raw.trim()) return { url: raw.trim() };
+  if (typeof raw === 'object' && raw !== null && 'url' in raw) {
+    const record = raw as { url?: string; altText?: string };
+    if (record.url?.trim()) return { url: record.url.trim(), altText: record.altText };
+  }
+  return undefined;
+}
 
-  const getIcon = (iconName: string) => {
-    const props = { className: "w-5 h-5" };
-    switch (iconName) {
-      case 'check': return <CheckCircle {...props} />;
-      case 'clock': return <Clock {...props} />;
-      case 'users': return <Users {...props} />;
-      case 'award': return <Award {...props} />;
-      default: return <CheckCircle {...props} />;
-    }
+function hasRichContent(content: unknown): boolean {
+  if (content == null || content === '') return false;
+  if (typeof content === 'object') return Boolean(tiptapToText(content));
+  return Boolean(String(content).trim());
+}
+
+/** Overview title / description / image only — no feature-point cards. */
+function normalizeOverviewSection(overview: unknown): OverviewData | null {
+  if (!overview || typeof overview !== 'object') return null;
+
+  const data = overview as Record<string, unknown>;
+  if (data.enabled === false) return null;
+
+  const title = data.title;
+  const description = data.description ?? data.subtitle ?? data.secondaryDescription;
+  const image = normalizeImage(data.image ?? data.backgroundImage ?? data.media);
+
+  if (!title && !description && !image) return null;
+
+  return {
+    title,
+    description,
+    imageUrl: image?.url ? getImageSrc(image.url) : undefined,
+    imageAlt: image?.altText?.trim() || undefined,
   };
+}
 
-  // Resolve the image source safely from the WebBuilder database structure
-  const resolvedImageSrc = getImageSrc(
-    typeof overview.image === 'object' && overview.image !== null
-      ? overview.image.url
-      : overview.image
+export const ServiceOverview: React.FC<ServiceOverviewProps> = ({ overview, className }) => {
+  const { colors, fonts } = useSectionTheme();
+  const primaryColor = colors.primaryButton;
+  const borderTint = `color-mix(in srgb, ${primaryColor} 20%, transparent)`;
+
+  const section = useMemo(() => normalizeOverviewSection(overview), [overview]);
+
+  const resolvedHeading = useMemo(
+    () => tiptapToText(section?.title) || 'Service Overview',
+    [section?.title]
   );
 
-  return (
-    <section 
-      className={cn('py-24 lg:py-40 overflow-hidden relative', className)}
-      style={{ backgroundColor: themeColors.pageBackground }}
-    >
-      {/* Background Accent */}
-      <div 
-        className="absolute top-0 left-0 w-1/3 h-full opacity-[0.02] pointer-events-none"
-        style={{ background: `linear-gradient(90deg, ${themeColors.primaryButton} 0%, transparent 100%)` }}
-      />
+  const descriptionText = useMemo(
+    () => tiptapToText(section?.description),
+    [section?.description]
+  );
 
-      <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
-        <div className="grid lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-          
-          {/* IMAGE SIDE: Asymmetric Composition */}
-          <div className="lg:col-span-6 order-2 lg:order-1 relative">
-            {resolvedImageSrc && (
-              <div className="relative z-10">
-                <div 
-                  className="rounded-[3rem] overflow-hidden shadow-2xl transform transition-transform duration-700 hover:scale-[1.02]"
-                  style={{ aspectRatio: '4/5' }}
-                >
-                  <img
-                    src={resolvedImageSrc}
-                    alt={overview.imageAlt || 'Service Detail'}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                {/* Modern Floating Metric */}
-                <div 
-                  className="absolute -bottom-8 -right-8 p-8 rounded-[2rem] shadow-2xl backdrop-blur-xl border border-white/20 hidden md:block"
-                  style={{ backgroundColor: `${themeColors.cardBackground}E6` }}
-                >
-                   <div className="flex flex-col items-center gap-1">
-                      <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center mb-2"
-                        style={{ backgroundColor: `${themeColors.primaryButton}15` }}
-                      >
-                         <Award className="w-5 h-5" style={{ color: themeColors.primaryButton }} />
-                      </div>
-                      <span 
-                        className="text-xs font-bold uppercase tracking-[0.2em] opacity-60"
-                        style={{ color: themeColors.lightPrimaryText }}
-                      >
-                        Guaranteed
-                      </span>
-                      <span 
-                        className="text-lg font-bold"
-                        style={{ color: themeColors.lightPrimaryText }}
-                      >
-                        Excellence
-                      </span>
-                   </div>
-                </div>
+  const { ref: triggerRef, isVisible } = useScrollAnimation<HTMLDivElement>({
+    threshold: 0.12,
+  });
+  const loaded = isVisible;
+
+  if (!section) return null;
+
+  const showDescription =
+    hasRichContent(section.description) || Boolean(descriptionText);
+  const hasImage = Boolean(section.imageUrl);
+
+  return (
+    <section
+      id="service-overview"
+      className={cn('relative overflow-visible border-t', className)}
+      style={{
+        backgroundColor: colors.pageBackground,
+        borderColor: `color-mix(in srgb, ${colors.mainText} 12%, transparent)`,
+        fontFamily: fonts.body,
+      }}
+    >
+      <div
+        ref={triggerRef}
+        className="mx-auto w-full max-w-[90rem] px-6 py-10 sm:py-12 md:px-12 lg:px-16 lg:py-14 xl:px-20"
+      >
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-10 lg:gap-14 xl:gap-16',
+            hasImage && 'lg:grid-cols-12 lg:items-start'
+          )}
+        >
+          <div
+            className={cn(
+              'min-w-0',
+              hasImage ? 'lg:col-span-6 xl:col-span-5' : 'mx-auto max-w-3xl text-center'
+            )}
+          >
+            <p
+              className={cn(
+                'mb-5 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em]',
+                !hasImage && 'justify-center'
+              )}
+              style={{
+                fontFamily: fonts.body,
+                color: primaryColor,
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(20px)',
+                transition: `opacity 0.6s ${EASE}, transform 0.6s ${EASE}`,
+              }}
+            >
+              <span className="inline-block h-px w-8 shrink-0" style={{ backgroundColor: primaryColor }} />
+              Service Overview
+            </p>
+
+            <h2
+              className={cn(
+                'text-[clamp(1.35rem,2.2vw,1.875rem)] font-normal leading-[1.15] tracking-tight',
+                hasImage ? 'text-left' : 'text-center'
+              )}
+              style={{
+                fontFamily: fonts.heading,
+                color: colors.mainText,
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(18px)',
+                transition: `opacity 0.7s ${EASE}, transform 0.7s ${EASE}`,
+                transitionDelay: '0.2s',
+              }}
+            >
+              {resolvedHeading}
+            </h2>
+
+            {showDescription && hasRichContent(section.description) && (
+              <div
+                className={cn(
+                  'mt-6 text-base font-light leading-relaxed sm:mt-8 sm:text-lg',
+                  '[&_h1]:mt-4 [&_h1]:text-xl [&_h1]:font-bold [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-base [&_h3]:font-bold [&_h4]:mt-3 [&_h4]:text-base [&_h4]:font-semibold [&_strong]:font-semibold [&_b]:font-semibold',
+                  hasImage ? 'max-w-xl text-left' : 'mx-auto max-w-xl text-center'
+                )}
+                style={{
+                  fontFamily: fonts.body,
+                  color: colors.secondaryText,
+                  opacity: loaded ? 1 : 0,
+                  transform: loaded ? 'translateY(0)' : 'translateY(24px)',
+                  transition: `opacity 0.8s ${EASE}, transform 0.8s ${EASE}`,
+                  transitionDelay: '0.55s',
+                }}
+              >
+                <TiptapRenderer content={section.description} className="text-inherit" />
               </div>
             )}
-            
-            {/* Geometric Decorative Frame */}
-            <div 
-              className="absolute -top-10 -left-10 w-64 h-64 rounded-full blur-[100px] opacity-10"
-              style={{ backgroundColor: themeColors.primaryButton }}
-            />
-          </div>
 
-          {/* CONTENT SIDE */}
-          <div className="lg:col-span-6 order-1 lg:order-2">
-            <div className="space-y-10">
-              {/* Context Label */}
-              <div className="inline-flex items-center gap-4">
-                <div className="h-px w-8" style={{ backgroundColor: themeColors.primaryButton }} />
-                <span 
-                  className="text-[10px] tracking-[0.4em] uppercase font-black"
-                  style={{ color: themeColors.primaryButton }}
-                >
-                  {overview.label ? <TiptapRenderer content={overview.label} as="inline" /> : 'Overview'}
-                </span>
-              </div>
-
-              {/* Heading */}
-              {overview.title && (
-                <h2 
-                  className="text-5xl lg:text-7xl font-semibold tracking-tight leading-[1.05]"
-                  style={{ color: themeColors.lightPrimaryText }}
-                >
-                  <TiptapRenderer content={overview.title} as="inline" />
-                </h2>
-              )}
-
-              {/* Body Text */}
-              {(overview.subtitle || overview.description) && (
-                <div 
-                  className="text-lg opacity-70 leading-relaxed max-w-xl"
-                  style={{ color: themeColors.lightSecondaryText }}
-                >
-                  <TiptapRenderer content={overview.subtitle || overview.description} />
-                </div>
-              )}
-
-              {/* Key Points - Stylized List */}
-              {overview.keyPoints && overview.keyPoints.length > 0 && (
-                <div className="grid sm:grid-cols-2 gap-8 py-4">
-                  {overview.keyPoints.map((point: any, index: number) => (
-                    <div key={index} className="space-y-3 group">
-                      <div className="flex items-center gap-3">
-                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: themeColors.primaryButton }} />
-                         <h4 
-                            className="font-bold text-sm uppercase tracking-wider"
-                            style={{ color: themeColors.lightPrimaryText }}
-                          >
-                            <TiptapRenderer content={point.title} as="inline" />
-                          </h4>
-                      </div>
-                      {point.description && (
-                        <div 
-                          className="text-sm opacity-60 leading-relaxed pl-4 border-l"
-                          style={{ borderColor: `${themeColors.inactive}40`, color: themeColors.lightSecondaryText }}
-                        >
-                          <TiptapRenderer content={point.description} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Stats & CTA Row */}
-              <div 
-                className="pt-12 border-t flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8"
-                style={{ borderColor: `${themeColors.inactive}20` }}
+            {showDescription && !hasRichContent(section.description) && descriptionText && (
+              <p
+                className={cn(
+                  'mt-6 text-base font-light leading-relaxed sm:mt-8 sm:text-lg',
+                  hasImage ? 'max-w-xl text-left' : 'mx-auto max-w-xl text-center'
+                )}
+                style={{
+                  fontFamily: fonts.body,
+                  color: colors.secondaryText,
+                  opacity: loaded ? 1 : 0,
+                  transform: loaded ? 'translateY(0)' : 'translateY(24px)',
+                  transition: `opacity 0.8s ${EASE}, transform 0.8s ${EASE}`,
+                  transitionDelay: '0.55s',
+                }}
               >
-                {overview.stats?.[0] && (
-                  <div className="flex items-center gap-4">
-                    <div 
-                        className="text-5xl font-bold tracking-tighter" 
-                        style={{ color: themeColors.lightPrimaryText }}
-                    >
-                        {overview.stats[0].value}
-                    </div>
-                    <div 
-                        className="text-[10px] leading-tight font-black uppercase tracking-widest opacity-40 max-w-[80px]"
-                        style={{ color: themeColors.lightPrimaryText }}
-                    >
-                        <TiptapRenderer content={overview.stats[0].label} as="inline" />
-                    </div>
-                  </div>
-                )}
+                {descriptionText}
+              </p>
+            )}
 
-                {overview.ctaButton && (
-                  <a
-                    href={overview.ctaButton.url}
-                    className="group flex items-center gap-4 py-4 px-8 rounded-full transition-all duration-300 text-white shadow-xl hover:shadow-2xl"
-                    style={{ 
-                      backgroundColor: themeColors.primaryButton,
-                    }}
-                  >
-                    <span className="text-sm font-bold uppercase tracking-widest">{overview.ctaButton.text}</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </a>
-                )}
+            {hasImage && (
+              <div
+                className="relative mt-8 aspect-[4/3] w-full overflow-hidden border lg:hidden"
+                style={{
+                  borderColor: borderTint,
+                  opacity: loaded ? 1 : 0,
+                  transform: loaded ? 'translateY(0)' : 'translateY(24px)',
+                  transition: `opacity 0.85s ${EASE}, transform 0.85s ${EASE}`,
+                  transitionDelay: '0.4s',
+                }}
+              >
+                <OptimizedImage
+                  src={section.imageUrl!}
+                  alt={section.imageAlt || resolvedHeading}
+                  fill
+                  className="object-cover object-center"
+                  sizes={IMAGE_SIZES.sectionWide}
+                />
               </div>
-            </div>
+            )}
           </div>
 
+          {hasImage && (
+            <aside
+              className="relative hidden min-w-0 lg:col-span-6 lg:sticky lg:top-28 lg:z-10 lg:block xl:col-span-7"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transition: `opacity 0.85s ${EASE}`,
+                transitionDelay: '0.35s',
+              }}
+            >
+              <div
+                className="relative aspect-[4/5] w-full overflow-hidden border xl:aspect-[5/6] xl:min-h-[28rem]"
+                style={{ borderColor: borderTint }}
+              >
+                <OptimizedImage
+                  src={section.imageUrl!}
+                  alt={section.imageAlt || resolvedHeading}
+                  fill
+                  className="object-cover object-center"
+                  sizes={IMAGE_SIZES.sectionHalf}
+                />
+              </div>
+            </aside>
+          )}
         </div>
       </div>
     </section>
   );
 };
+
+export default ServiceOverview;

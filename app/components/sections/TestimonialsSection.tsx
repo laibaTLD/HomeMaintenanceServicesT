@@ -67,7 +67,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
 
     return (
         <section
-            className={cn('relative py-12 lg:py-16 overflow-hidden', className)}
+            className={cn('relative py-8 lg:py-10 overflow-hidden', className)}
             style={{ backgroundColor: themeColors.sectionBackground }}
         >
             <div className="container mx-auto px-6">
@@ -106,7 +106,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
                 <div className="relative mt-8">
                     <div
                         ref={trackRef}
-                        className="flex gap-12 lg:gap-24 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-12 items-center"
+                        className="flex gap-12 lg:gap-24 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-8 items-center"
                         style={{ scrollbarWidth: 'none' }}
                     >
                         {items.map((t, idx) => (

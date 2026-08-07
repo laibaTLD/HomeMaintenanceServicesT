@@ -79,7 +79,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projectsSectio
   const showViewAll = !hasSelectedIds && publishedCount > HOME_PREVIEW_LIMIT;
 
   return (
-    <section className={cn('py-12 lg:py-16 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
+    <section className={cn('py-8 lg:py-10 overflow-hidden', className)} style={{ backgroundColor: themeColors.pageBackground }}>
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 lg:mb-12">
           <div className="max-w-2xl">

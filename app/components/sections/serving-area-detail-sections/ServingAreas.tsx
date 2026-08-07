@@ -1,180 +1,94 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import Link from 'next/link';
-import { cn } from '@/app/lib/utils';
-import { useThemeColors, useThemeFonts } from '@/app/hooks/useTheme';
-import { useWebBuilder } from '@/app/providers/WebBuilderProvider';
-import { MapPin } from 'lucide-react';
-import { TiptapRenderer } from '@/app/components/ui/TiptapRenderer';
+import { useMemo } from 'react';
+import { useParams } from 'next/navigation';
+import { ServingAreasSection } from '@/app/components/sections/ServingAreasSection';
+import { resolveServiceSlug } from '@/app/lib/serviceAreaSlugs';
+import { tiptapToText } from '@/app/lib/seo';
 
-interface ServiceServingAreasSectionProps {
-    service: any;
+interface ServingAreasProps {
+  /** CMS section config (title/description/slug only — areas come from live API) */
+  service?: unknown;
+  className?: string;
 }
 
-export const ServingAreas: React.FC<ServiceServingAreasSectionProps> = ({ service }) => {
-    const themeColors = useThemeColors();
-    const themeFonts = useThemeFonts();
-    const { site } = useWebBuilder();
-
-    const areas = useMemo(() => {
-        // Try multiple data sources to find service areas
-        let siteAreas: any[] = [];
-        let serviceAreas: any[] = [];
-        
-        // Get site areas
-        if (Array.isArray(site?.serviceAreas)) {
-            siteAreas = site.serviceAreas.filter(Boolean);
-        }
-        
-        // Get service areas from different possible locations
-        if (service?.serviceAreas && Array.isArray(service.serviceAreas)) {
-            serviceAreas = service.serviceAreas;
-        } else if (service?.areas && Array.isArray(service.areas)) {
-            serviceAreas = service.areas;
-        } else if (Array.isArray(service)) {
-            // If service itself is an array of areas
-            serviceAreas = service;
-        }
-        
-        // Use service-specific areas if available, otherwise fall back to site areas
-        const finalAreas = serviceAreas.length > 0 ? serviceAreas : siteAreas;
-        
-        // Clean up area strings (remove extra spaces)
-        const cleanedAreas = finalAreas.map(area => {
-            if (typeof area === 'string') {
-                return area.trim();
-            }
-            return area;
-        });
-        
-        return cleanedAreas;
-    }, [service, site?.serviceAreas]);
-
-    // Always try to render if we have areas, even if service is null
-    if (areas.length === 0) {
-        return (
-            <div className="py-16 text-center" style={{ color: themeColors.lightPrimaryText }}>
-                No service areas available
-            </div>
-        );
-    }
-
-    // Generate service slug from service name or use a default
-    const serviceSlug = service?.name ?
-        String(typeof service.name === 'object' ? JSON.stringify(service.name) : service.name)
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '') :
-        'service';
-
-    const resolvedTitle = `Serving Areas`;
-    const serviceName = typeof service?.name === 'object' ? JSON.stringify(service.name) : service?.name;
-    const resolvedDescription = serviceName ?
-        `We provide ${serviceName} services in the following areas` :
-        'We provide services in the following areas';
-
-    return (
-        <section
-            className={cn('py-24 lg:py-32')}
-            style={{ backgroundColor: themeColors.sectionBackground }}
-        >
-            <div className="container mx-auto px-6">
-                
-                {/* Editorial Header Block */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
-                    <div className="max-w-2xl">
-                        {/* Heritage Label */}
-                        <div className="mb-6 flex items-center gap-3">
-                            <span 
-                                className="text-[10px] tracking-[0.4em] uppercase font-bold"
-                                style={{ color: themeColors.primaryButton }}
-                            >
-                                OUR REACH
-                            </span>
-                            <div className="w-12 h-[1px]" style={{ backgroundColor: `${themeColors.primaryButton}40` }} />
-                        </div>
-
-                        {resolvedTitle && (
-                            <h2
-                                className="text-5xl lg:text-7xl font-serif leading-tight"
-                                style={{ color: themeColors.lightPrimaryText }}
-                            >
-                                {resolvedTitle}
-                            </h2>
-                        )}
-                    </div>
-
-                    {resolvedDescription && (
-                        <div
-                            className="max-w-sm text-lg font-light leading-relaxed opacity-70"
-                            style={{ color: themeColors.lightSecondaryText }}
-                        >
-                            {resolvedDescription}
-                        </div>
-                    )}
-                </div>
-
-                {/* Areas Display - Clean Architectural Layout */}
-                <div className="max-w-7xl">
-                    <div className="flex flex-wrap gap-y-8 sm:gap-y-12 gap-x-8 sm:gap-x-12 lg:gap-x-16 border-t pt-12 sm:pt-16" style={{ borderColor: `${themeColors.inactive}30` }}>
-                        {areas.map((area: any, idx: number) => {
-                            const cityName = typeof area === 'string' ? area : area.city;
-                            const citySlug = String(cityName)
-                                .toLowerCase()
-                                .replace(/[^a-z0-9]+/g, '-')
-                                .replace(/^-|-$/g, '');
-
-                            return (
-                                <div key={`${cityName}-${idx}`} className="group relative">
-                                    <Link
-                                        href={`/service/${serviceSlug}/service-areas/${citySlug}`}
-                                        className="flex flex-col gap-4 transition-all duration-500"
-                                        style={{}}
-                                    >
-                                        {/* Indexing Number */}
-                                        <span 
-                                            className="text-[10px] font-bold tracking-tighter opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
-                                            style={{ color: themeColors.primaryButton }}
-                                        >
-                                            {(idx + 1).toString().padStart(2, '0')}
-                                        </span>
-
-                                        <div className="flex items-center gap-3">
-                                            <span
-                                                className="text-2xl lg:text-3xl font-serif transition-colors"
-                                                style={{ color: themeColors.lightPrimaryText }}
-                                            >
-                                                <TiptapRenderer content={cityName} as="inline" />
-                                            </span>
-                                            <MapPin
-                                                className="w-4 h-4 opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
-                                                style={{ color: themeColors.primaryButton }}
-                                            />
-                                        </div>
-
-                                        {/* Region if available */}
-                                        {typeof area !== 'string' && area.region && (
-                                            <span
-                                                className="text-sm opacity-70"
-                                                style={{ color: themeColors.lightSecondaryText }}
-                                            >
-                                                <TiptapRenderer content={area.region} as="inline" />
-                                            </span>
-                                        )}
-                                        
-                                        {/* Minimal hover line */}
-                                        <div 
-                                            className="h-px w-0 group-hover:w-full transition-all duration-700"
-                                            style={{ backgroundColor: themeColors.primaryButton }}
-                                        />
-                                    </Link>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+type ServingAreasConfig = {
+  enabled: boolean;
+  title?: string;
+  description?: string;
+  serviceSlug?: string;
 };
+
+function toPlainText(value: unknown): string | undefined {
+  if (value == null || value === '') return undefined;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  const text = tiptapToText(value).trim();
+  return text || undefined;
+}
+
+/** CMS config only — strip static area lists so pills always come from live API. */
+export function stripStaticAreasFromConfig(service: unknown): unknown {
+  if (!service || typeof service !== 'object') return service;
+  const { areas, serviceAreas, items, locations, ...cms } = service as Record<string, unknown>;
+  return cms;
+}
+
+function normalizeSectionConfig(
+  service: unknown,
+  serviceSlugFromUrl: string
+): ServingAreasConfig | null {
+  const raw = stripStaticAreasFromConfig(service);
+  const data = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : null;
+
+  if (data?.enabled === false) return { enabled: false };
+
+  const serviceSlug =
+    (typeof data?.serviceSlug === 'string' && data.serviceSlug.trim()) ||
+    serviceSlugFromUrl ||
+    undefined;
+
+  if (!data && !serviceSlug) return { enabled: true };
+
+  if (!data) {
+    return { enabled: true, serviceSlug };
+  }
+
+  return {
+    enabled: true,
+    title: toPlainText(data.title),
+    description: toPlainText(data.description ?? data.shortDescription),
+    serviceSlug,
+  };
+}
+
+/** Service area coverage — live areas from builder API (same as home). */
+export const ServingAreas: React.FC<ServingAreasProps> = ({ service, className }) => {
+  const params = useParams();
+  const serviceSlugFromUrl =
+    typeof params?.serviceSlug === 'string' ? params.serviceSlug : '';
+
+  const config = useMemo(
+    () =>
+      normalizeSectionConfig(service, serviceSlugFromUrl) ??
+      (serviceSlugFromUrl
+        ? { enabled: true, serviceSlug: resolveServiceSlug({ slug: serviceSlugFromUrl }) }
+        : { enabled: true }),
+    [service, serviceSlugFromUrl]
+  );
+
+  if (config.enabled === false) return null;
+
+  return (
+    <ServingAreasSection
+      enabled={config.enabled}
+      title={config.title}
+      description={config.description}
+      className={className}
+    />
+  );
+};
+
+export default ServingAreas;
